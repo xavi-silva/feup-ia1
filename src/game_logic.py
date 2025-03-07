@@ -2,6 +2,8 @@ from bird import Bird
 from branch import Branch
 
 def can_move_birds(origin_branch, destination_branch):
+    if destination_branch.completed:  
+        return False
     if len(destination_branch.birds) >= Branch.branch_size:
         return False
     if origin_branch.is_empty():
@@ -23,10 +25,17 @@ def move_birds(origin_branch, destination_branch):
     return False
 
 def check_win(branches):
+    branches = remove_full_branches(branches)
+    if all(branch.completed or branch.is_empty() for branch in branches):
+        return True
+    return False
+
+def remove_full_branches(branches):
     for branch in branches:
-        if not branch.is_empty():
-            return False
-    return True
+        if branch.full_one_species():
+            branch.completed = True 
+    return branches
+
 
 # probably unnecessary function
 def get_valid_moves(branches):

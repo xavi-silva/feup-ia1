@@ -1,6 +1,8 @@
 import pygame
 import random
 import game_logic
+from graph import breadth_first_search
+from graph import GameState
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -41,24 +43,62 @@ pygame.display.set_caption("Bird Sorter Game")
 birds = [Bird(i, BIRD_IMAGES[i]) for i in range(9)]
 #branches = [Branch(200, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(400, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(600, 500, [birds[0], birds[1]], BRANCH_IMAGE)]
 
-branch1 = Branch(200, 500, [birds[0], birds[0]], BRANCH_IMAGE)
-branch2 = Branch(300, 500, [], BRANCH_IMAGE)
-branch3 = Branch(400, 500, [birds[0]], BRANCH_IMAGE)
+branch1 = Branch(200, 500, [birds[0], birds[0], birds[1]], BRANCH_IMAGE)
+branch2 = Branch(300, 500, [birds[1], birds[1], birds[1]], BRANCH_IMAGE)
+branch3 = Branch(400, 500, [birds[0], birds[0]], BRANCH_IMAGE)
 
 branches = [branch1, branch2, branch3]
 
 # Test code here
-for branch in branches:
-    print(branch)
 
-print("............")
+initial_state = GameState(branches)
 
-s = game_logic.get_valid_moves(branches)
-for pair in s:
-    print(f"({pair[0]}, {pair[1]})")
+solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 
-game_logic.move_birds(branch3, branch1)
-print("............")
+# Print the solution path
+if solution_node:
+    print("Solution Found!\n")
+    path = []
+    while solution_node:
+        path.append(solution_node.state)
+        solution_node = solution_node.parent
+
+    path.reverse()
+
+    for step_num, state in enumerate(path):
+        print(f"Step {step_num}:")
+        print(state)
+        print("------------------")
+else:
+    print("No solution found.")
+
+#print("Initial State:")
+#for branch in branches:
+#    print(branch)
+
+# Generate child states
+#new_states = initial_state.generate_child_states()
+
+#print("\nGenerated States:")
+#for i, state in enumerate(new_states):
+#    print(f"State {i+1}:")
+#    print(state)  # Print the GameState object directly (uses __str__ method)
+#    print("------------------")
+
+#print("............")
+
+
+#for branch in branches:
+#    print(branch)
+
+#print("............")
+
+#s = game_logic.get_valid_moves(branches)
+#for pair in s:
+#    print(f"({pair[0]}, {pair[1]})")
+
+#game_logic.move_birds(branch3, branch1)
+#print("............")
 
 #s = (game_logic.get_valid_moves(branches))
 
@@ -69,8 +109,8 @@ print("............")
 #s = branch3.full_one_species()
 #print(s)
 
-for branch in branches:
-    print(branch)
+#for branch in branches:
+#    print(branch)
 
 # Game Loop
 running = True
@@ -78,7 +118,9 @@ clock = pygame.time.Clock()
 selected_bird = None
 while running:
     screen.fill(BACKGROUND_COLOR)
-    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
     #for event in pygame.event.get():
     #    if event.type == pygame.QUIT:
     #        running = False

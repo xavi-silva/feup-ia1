@@ -14,17 +14,44 @@ class TreeNode:
         self.children.append(child_node)
         child_node.parent = self
 
-# not tested yet
-def child_states(branches):
-    new_states = []
-    for origin_branch in branches:
-        for destination_branch in branches:
-            if origin_branch != destination_branch:
-                if game_logic.can_move_birds(origin_branch, destination_branch):
-                    new_branches = [Branch(branch.x, branch.y, branch.birds.copy(), branch.image) for branch in branches]
-                    game_logic.move_birds(new_branches[origin_branch], new_branches[destination_branch])
-                    new_states.append(new_branches)
-    return new_states
+class GameState:
+    def __init__(self, branches):
+        self.branches = tuple(branches)
+    def __eq__(self, other):
+        return isinstance(other, GameState) and self.branches == other.branches
+
+    def __hash__(self):
+        return hash(self.branches)
+
+    def __str__(self):
+        return "\n".join(str(branch) for branch in self.branches)
+
+    def generate_child_states(self):
+        child_states = []
+        for origin in self.branches:
+            if origin.completed:  
+                continue 
+
+            for destination in self.branches:
+                if origin != destination and not destination.completed and game_logic.can_move_birds(origin, destination):
+                    new_branches = [Branch(branch.x, branch.y, branch.birds.copy(), branch.image) for branch in self.branches]
+
+                    origin_index = self.branches.index(origin)
+                    destination_index = self.branches.index(destination)
+
+                    game_logic.move_birds(new_branches[origin_index], new_branches[destination_index])
+
+                    new_branches = game_logic.remove_full_branches(new_branches)
+
+                    new_state = GameState(tuple(new_branches))
+
+                    if new_state not in child_states:
+                        child_states.append(new_state)
+
+        return child_states
+
+
+
 
 # copied search algorithms from buckets example, needs adjustments
 
@@ -35,8 +62,17 @@ def breadth_first_search(initial_state, goal_state_func, operators_func):
     visited = set([initial_state])
     while queue:
         node = queue.popleft()   # get first element in the queue
-        if goal_state_func(node.state):   # check goal state
+        print("\nExpanding State:")
+        print(node.state)
+        if goal_state_func(node.state.branches):   # check goal state
             return node
+
+        new_states = operators_func(node.state)  # Generate next states
+        print(f"Generated {len(new_states)} new states:")
+        for i, state in enumerate(new_states, 1):
+            print(f"State {i}:")
+            print(state)
+            print("------------------")
 
         for state in operators_func(node.state):   # go through next states
             if state not in visited:

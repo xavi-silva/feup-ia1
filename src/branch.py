@@ -2,7 +2,7 @@ import pygame
 from collections import deque
 
 class Branch(pygame.sprite.Sprite):
-    branch_size = 2
+    branch_size = 4
 
     def __init__(self, x, y, birds, image):
         super().__init__()
@@ -11,6 +11,7 @@ class Branch(pygame.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
         self.birds = birds  # Stack to hold bird objects
+        self.completed = False
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -23,15 +24,15 @@ class Branch(pygame.sprite.Sprite):
         return not self.__eq__(other)
 
     def __hash__(self):
-        return hash((self.x, self.y))
+        return hash((self.x, self.y, tuple(self.birds)))
     ''' - '''
 
     def __str__(self):
-        res = f"(Pos: {str(self.x)}, {str(self.y)}, Birds:"
-        for bird in self.birds:
-            res += f" {str(bird)}"
-        res += ")"
-        return res
+        """String representation of the branch for debugging."""
+        birds_str = " ".join(f"({bird.bird_type})" for bird in self.birds)
+        status = " Completed" if self.completed else ""
+        return f"(Pos: {self.x}, {self.y}, Birds: {birds_str}){status}"
+
 
     def add_birds(self, bird, n):
         if n > self.branch_size - len(self.birds):

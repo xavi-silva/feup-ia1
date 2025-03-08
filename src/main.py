@@ -44,8 +44,8 @@ birds = [Bird(i, BIRD_IMAGES[i]) for i in range(9)]
 #branches = [Branch(200, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(400, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(600, 500, [birds[0], birds[1]], BRANCH_IMAGE)]
 
 branch1 = Branch(200, 500, [birds[0], birds[0], birds[1]], BRANCH_IMAGE)
-branch2 = Branch(300, 500, [birds[1], birds[1], birds[1]], BRANCH_IMAGE)
-branch3 = Branch(400, 500, [birds[0], birds[0]], BRANCH_IMAGE)
+branch2 = Branch(400, 400, [birds[1], birds[1], birds[1]], BRANCH_IMAGE)
+branch3 = Branch(200, 300, [birds[0], birds[0]], BRANCH_IMAGE)
 
 branches = [branch1, branch2, branch3]
 

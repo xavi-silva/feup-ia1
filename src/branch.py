@@ -53,10 +53,8 @@ class Branch(pygame.sprite.Sprite):
     def get_top(self):
         if self.birds:
             bird = self.birds[-1]
-            curr_bird = bird
-            n = 0
-            while curr_bird == bird and n < len(self.birds):
-                curr_bird = self.birds[-n]
+            n = 1
+            while n < len(self.birds) and self.birds[-(n+1)] == bird:
                 n += 1
             return (bird, n)
         return (None, 0)

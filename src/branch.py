@@ -4,14 +4,15 @@ from collections import deque
 class Branch(pygame.sprite.Sprite):
     branch_size = 4
 
-    def __init__(self, x, y, birds, image):
+    def __init__(self, x, y, birds, image, side="left"):
         super().__init__()
         self.x = x
         self.y = y
-        self.image = image
+        self.image = image if side == "left" else pygame.transform.flip(image, True, False)  # ✅ Flip image for right side
         self.rect = self.image.get_rect(center=(x, y))
         self.birds = birds  # Stack to hold bird objects
         self.completed = False
+        self.side = side
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

@@ -11,7 +11,7 @@ from branch import Branch
 pygame.init()
 
 # Game Constants
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1000, 800
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 
@@ -32,8 +32,8 @@ BIRD_IMAGES = [
 BRANCH_IMAGE = pygame.image.load("../assets/branch.png")
 
 # Scale images
-BIRD_IMAGES = [pygame.transform.scale(img, (50, 50)) for img in BIRD_IMAGES]
-BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (120, 30))
+BIRD_IMAGES = [pygame.transform.scale(img, (100, 100)) for img in BIRD_IMAGES]
+BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (500, 500))
 
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -43,9 +43,9 @@ pygame.display.set_caption("Bird Sorter Game")
 birds = [Bird(i, BIRD_IMAGES[i]) for i in range(9)]
 #branches = [Branch(200, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(400, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(600, 500, [birds[0], birds[1]], BRANCH_IMAGE)]
 
-branch1 = Branch(200, 500, [birds[0], birds[0], birds[1]], BRANCH_IMAGE)
-branch2 = Branch(400, 400, [birds[1], birds[1], birds[1]], BRANCH_IMAGE)
-branch3 = Branch(200, 300, [birds[0], birds[0]], BRANCH_IMAGE)
+branch1 = Branch(200, 200, [birds[0], birds[0], birds[1]], BRANCH_IMAGE, side="left")
+branch2 = Branch(800, 400, [birds[1], birds[1], birds[1]], BRANCH_IMAGE, side = "right")
+branch3 = Branch(200, 600, [birds[0], birds[0]], BRANCH_IMAGE, side="left")
 
 branches = [branch1, branch2, branch3]
 
@@ -112,7 +112,23 @@ else:
 #for branch in branches:
 #    print(branch)
 
+def draw_game(branches):
+    screen.fill(BACKGROUND_COLOR)  # Clear the screen
+
+    for branch in branches:
+        screen.blit(branch.image, branch.rect)
+
+        # Draw birds on top of branches
+        for i, bird in enumerate(branch.birds):
+            bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
+            bird_rect = bird.image.get_rect(bottomright=(branch.x + (i * 100), branch.y))
+            screen.blit(bird_img, bird_rect)
+
+    pygame.display.flip()  # Update display
+
 # Game Loop
+draw_game(branches)
+pygame.time.delay(2000)
 running = True
 clock = pygame.time.Clock()
 selected_bird = None
@@ -135,8 +151,7 @@ while running:
     #                selected_bird = None
     
     # Draw everything
-    for branch in branches:
-        screen.blit(branch.image, branch.rect)
+    draw_game(branches)
     #for bird in birds:
      #   screen.blit(bird.image, bird.rect)
     

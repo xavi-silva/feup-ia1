@@ -131,6 +131,7 @@ def draw_game(branches):
 
 # Game Loop
 selected_branch = None
+move_mode = False
 
 draw_game(branches)
 pygame.time.delay(2000)
@@ -145,13 +146,26 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             for branch in branches:
                 if branch.rect.collidepoint(event.pos):
-                    if selected_branch:
-                        selected_branch.selected = False
+                    if not move_mode:
+                        if selected_branch:
+                            selected_branch.selected = False
+                            selected_branch.update_color()
+
+                        selected_branch = branch
+                        selected_branch.selected = True
                         selected_branch.update_color()
 
-                    selected_branch = branch 
-                    selected_branch.selected = True
-                    selected_branch.update_color() 
+                        move_mode = True
+                    else:
+                        if selected_branch and selected_branch != branch:
+                            game_logic.move_birds(selected_branch, branch)
+
+                            selected_branch.selected = False
+                            selected_branch.update_color()
+
+                            selected_branch = None
+                            move_mode = False
+
     #for event in pygame.event.get():
     #    if event.type == pygame.QUIT:
     #        running = False

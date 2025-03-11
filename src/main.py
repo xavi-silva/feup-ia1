@@ -116,6 +116,7 @@ def draw_game(branches):
     screen.fill(BACKGROUND_COLOR)  # Clear the screen
 
     for branch in branches:
+        branch.update_color()
         screen.blit(branch.image, branch.rect)
 
         # Draw birds on top of branches
@@ -129,6 +130,8 @@ def draw_game(branches):
     pygame.display.flip()  # Update display
 
 # Game Loop
+selected_branch = None
+
 draw_game(branches)
 pygame.time.delay(2000)
 running = True
@@ -139,6 +142,16 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            for branch in branches:
+                if branch.rect.collidepoint(event.pos):
+                    if selected_branch:
+                        selected_branch.selected = False
+                        selected_branch.update_color()
+
+                    selected_branch = branch 
+                    selected_branch.selected = True
+                    selected_branch.update_color() 
     #for event in pygame.event.get():
     #    if event.type == pygame.QUIT:
     #        running = False

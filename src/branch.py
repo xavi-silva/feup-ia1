@@ -8,11 +8,22 @@ class Branch(pygame.sprite.Sprite):
         super().__init__()
         self.x = x
         self.y = y
-        self.image = image if side == "left" else pygame.transform.flip(image, True, False)  # ✅ Flip image for right side
+        self.original_image = image if side == "left" else pygame.transform.flip(image, True, False)
+        self.image = self.original_image.copy()
         self.rect = self.image.get_rect(center=(x, y))
         self.birds = birds  # Stack to hold bird objects
         self.completed = False
         self.side = side
+        self.selected = False
+
+    def update_color(self):
+        if self.selected:
+            yellow_overlay = pygame.Surface(self.image.get_size(), pygame.SRCALPHA)
+            yellow_overlay.fill((255, 255, 0, 100)) 
+            self.image = self.original_image.copy() 
+            self.image.blit(yellow_overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MULT) 
+        else:
+            self.image = self.original_image.copy()
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

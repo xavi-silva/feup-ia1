@@ -11,7 +11,7 @@ from branch import Branch
 pygame.init()
 
 # Game Constants
-WIDTH, HEIGHT = 1000, 800
+WIDTH, HEIGHT = 1100, 800
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 
@@ -44,7 +44,7 @@ birds = [Bird(i, BIRD_IMAGES[i]) for i in range(9)]
 #branches = [Branch(200, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(400, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(600, 500, [birds[0], birds[1]], BRANCH_IMAGE)]
 
 branch1 = Branch(200, 200, [birds[0], birds[0], birds[1]], BRANCH_IMAGE, side="left")
-branch2 = Branch(800, 400, [birds[1], birds[1], birds[1]], BRANCH_IMAGE, side = "right")
+branch2 = Branch(900, 400, [birds[1], birds[1], birds[1]], BRANCH_IMAGE, side = "right")
 branch3 = Branch(200, 600, [birds[0], birds[0]], BRANCH_IMAGE, side="left")
 
 branches = [branch1, branch2, branch3]
@@ -120,8 +120,10 @@ def draw_game(branches):
 
         # Draw birds on top of branches
         for i, bird in enumerate(branch.birds):
+            branch_width = branch.image.get_width()
+            bird_x = branch.x - (branch_width // 2) + 150 + (i * 100) if branch.side == "left" else branch.x + (branch_width // 2) - 150 - (i * 100)
             bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
-            bird_rect = bird.image.get_rect(bottomright=(branch.x + (i * 100), branch.y))
+            bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y))
             screen.blit(bird_img, bird_rect)
 
     pygame.display.flip()  # Update display

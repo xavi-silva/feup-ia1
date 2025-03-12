@@ -1,11 +1,11 @@
 import pygame
 import random
 import game_logic
-from graph import breadth_first_search
-from graph import GameState
+from graph import breadth_first_search, depth_first_search, GameState
 from collections import deque
 from bird import Bird
 from branch import Branch
+import modes
 
 # Initialize pygame
 pygame.init()
@@ -15,45 +15,34 @@ WIDTH, HEIGHT = 1100, 800
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 
-# Load images
-BIRD_IMAGES = [
-    pygame.image.load("../assets/bird1.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-    pygame.image.load("../assets/bird2.png"),
-]
-
-BRANCH_IMAGE = pygame.image.load("../assets/branch.png")
-
-# Scale images
-BIRD_IMAGES = [pygame.transform.scale(img, (100, 100)) for img in BIRD_IMAGES]
-BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (500, 500))
 
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Bird Sorter Game")
+pygame.display.set_caption("Bird Sorter")
 
-# Create Branches and Birds
-birds = [Bird(i, BIRD_IMAGES[i]) for i in range(9)]
-#branches = [Branch(200, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(400, 500, [birds[0], birds[1]], BRANCH_IMAGE), Branch(600, 500, [birds[0], birds[1]], BRANCH_IMAGE)]
+difficulty = "easy"
 
-branch1 = Branch(200, 200, [birds[0], birds[0], birds[1]], BRANCH_IMAGE, side="left")
-branch2 = Branch(900, 400, [birds[1], birds[1], birds[1]], BRANCH_IMAGE, side = "right")
-branch3 = Branch(200, 600, [birds[0], birds[0]], BRANCH_IMAGE, side="left")
-
-branches = [branch1, branch2, branch3]
-
-# Test code here
+if difficulty == "easy":
+    branches = modes.easy_mode()
+elif difficulty == "medium":
+    branches = modes.medium_mode()
+elif difficulty == "hard":
+    branches = modes.hard_mode()
+else:
+    branches = modes.easy_mode()
 
 initial_state = GameState(branches)
 
-solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+search_algorithm = "dfs"
+
+if search_algorithm == "bfs":
+    solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "dfs":
+    solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+else:
+    print("Invalid search algorithm.")
+
+solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 
 # Print the solution path
 if solution_node:

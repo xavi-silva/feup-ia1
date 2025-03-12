@@ -57,6 +57,7 @@ class GameState:
 
 # Breadth-First Search
 def breadth_first_search(initial_state, goal_state_func, operators_func):
+    print("\nStarting BFS Search")
     root = TreeNode(initial_state)   # create the root node in the search tree
     queue = deque([root])   # initialize the queue to store the nodes
     visited = set([initial_state])
@@ -85,14 +86,26 @@ def breadth_first_search(initial_state, goal_state_func, operators_func):
 # Depth-First Search
 def depth_first_search(initial_state, goal_state_func, operators_func):
     visited = set()
+    print("\nStarting DFS Search")
+    root = TreeNode(initial_state)
     return dfs_recursive(initial_state, goal_state_func, operators_func, visited, None)
 
 def dfs_recursive(state, goal_state_func, operators_func, visited, parent):
+    print("\nExpanding State:")
+    print(state)
     visited.add(state)
     node = TreeNode(state, parent)
 
-    if goal_state_func(state):
+    if goal_state_func(state.branches):
         return node  # Return the goal node
+
+    new_states = operators_func(state)
+
+    print(f"Generated {len(new_states)} new states:")
+    for i, child_state in enumerate(new_states, 1):
+        print(f"State {i}:")
+        print(child_state)
+        print("------------------")
 
     for neighbor in operators_func(state):
         if neighbor not in visited:

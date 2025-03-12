@@ -166,6 +166,10 @@ while running:
                             selected_branch = None
                             move_mode = False
 
+                            if game_logic.check_win(branches):
+                                print("You Win!")
+                                running = False
+
     #for event in pygame.event.get():
     #    if event.type == pygame.QUIT:
     #        running = False

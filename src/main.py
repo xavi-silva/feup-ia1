@@ -42,8 +42,6 @@ elif search_algorithm == "dfs":
 else:
     print("Invalid search algorithm.")
 
-solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-
 # Print the solution path
 if solution_node:
     print("Solution Found!\n")

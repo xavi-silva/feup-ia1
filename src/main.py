@@ -98,9 +98,12 @@ else:
 
 #for branch in branches:
 #    print(branch)
+sky = pygame.image.load("../assets/sky.webp")
+sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
 
 def draw_game(branches):
-    screen.fill(BACKGROUND_COLOR)  # Clear the screen
+    #screen.fill(BACKGROUND_COLOR)  # Clear the screen
+    screen.blit(sky, (0, 0))
 
     for branch in branches:
         branch.update_color()

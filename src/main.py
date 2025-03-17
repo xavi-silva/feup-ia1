@@ -35,6 +35,7 @@ else:
 initial_state = GameState(branches)
 
 search_algorithm = "dfs"
+solution_node = None
 
 if search_algorithm == "bfs":
     solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
@@ -117,7 +118,8 @@ def draw_game(branches):
             bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
             bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y))
             screen.blit(bird_img, bird_rect)
-
+        #for branch in branches:
+          #      pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
 # Game Loop

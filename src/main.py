@@ -9,6 +9,7 @@ import modes
 
 # Initialize pygame
 pygame.init()
+pygame.mixer.init()
 
 # Game Constants
 WIDTH, HEIGHT = 1100, 800
@@ -126,6 +127,13 @@ move_mode = False
 draw_game(branches)
 pygame.time.delay(2000)
 running = True
+
+pygame.mixer.music.load("../sounds/background.mp3")
+pygame.mixer.music.play(-1)
+bird_sound = pygame.mixer.Sound("../sounds/bird.wav")
+move_sound = pygame.mixer.Sound("../sounds/wings.wav")
+branch_sound = pygame.mixer.Sound("../sounds/leaves.wav")
+
 clock = pygame.time.Clock()
 selected_bird = None
 while running:
@@ -142,14 +150,19 @@ while running:
                             selected_branch.update_color()
 
                         selected_branch = branch
+                        bird_sound.play()
                         selected_branch.selected = True
                         selected_branch.update_color()
 
                         move_mode = True
                     else:
                         if selected_branch and selected_branch != branch:
+                            move_sound.play()
                             game_logic.move_birds(selected_branch, branch)
-
+                            #sleep 1 second
+                            pygame.time.delay(1000)
+                            if (branch.full_one_species()):
+                                branch_sound.play()
                             selected_branch.selected = False
                             selected_branch.update_color()
 

@@ -16,12 +16,11 @@ WIDTH, HEIGHT = 1100, 800
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 
-
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bird Sorter")
 
-difficulty = "easy"
+difficulty = "medium"
 
 if difficulty == "easy":
     branches = modes.easy_mode()

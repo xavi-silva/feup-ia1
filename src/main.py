@@ -9,18 +9,18 @@ import modes
 
 # Initialize pygame
 pygame.init()
+pygame.mixer.init()
 
 # Game Constants
 WIDTH, HEIGHT = 1100, 800
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 
-
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bird Sorter")
 
-difficulty = "easy"
+difficulty = "medium"
 
 if difficulty == "easy":
     branches = modes.easy_mode()
@@ -34,6 +34,7 @@ else:
 initial_state = GameState(branches)
 
 search_algorithm = "dfs"
+solution_node = None
 
 if search_algorithm == "bfs":
     solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
@@ -98,9 +99,12 @@ else:
 
 #for branch in branches:
 #    print(branch)
+sky = pygame.image.load("../assets/sky.webp")
+sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
 
 def draw_game(branches):
-    screen.fill(BACKGROUND_COLOR)  # Clear the screen
+    #screen.fill(BACKGROUND_COLOR)  # Clear the screen
+    screen.blit(sky, (0, 0))
 
     for branch in branches:
         branch.update_color()
@@ -113,7 +117,8 @@ def draw_game(branches):
             bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
             bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y))
             screen.blit(bird_img, bird_rect)
-
+        #for branch in branches:
+          #      pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
 # Game Loop
@@ -123,6 +128,13 @@ move_mode = False
 draw_game(branches)
 pygame.time.delay(2000)
 running = True
+
+pygame.mixer.music.load("../sounds/background.mp3")
+pygame.mixer.music.play(-1)
+bird_sound = pygame.mixer.Sound("../sounds/bird.wav")
+move_sound = pygame.mixer.Sound("../sounds/wings.wav")
+branch_sound = pygame.mixer.Sound("../sounds/leaves.wav")
+
 clock = pygame.time.Clock()
 selected_bird = None
 while running:
@@ -139,14 +151,19 @@ while running:
                             selected_branch.update_color()
 
                         selected_branch = branch
+                        bird_sound.play()
                         selected_branch.selected = True
                         selected_branch.update_color()
 
                         move_mode = True
                     else:
                         if selected_branch and selected_branch != branch:
+                            move_sound.play()
                             game_logic.move_birds(selected_branch, branch)
-
+                            #sleep 1 second
+                            pygame.time.delay(1000)
+                            if (branch.full_one_species()):
+                                branch_sound.play()
                             selected_branch.selected = False
                             selected_branch.update_color()
 

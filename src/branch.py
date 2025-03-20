@@ -26,11 +26,12 @@ class Branch(pygame.sprite.Sprite):
             self.image = self.original_image.copy()
 
     def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        else:
+        if not isinstance(other, self.__class__):
             return False
-
+        return (self.x == other.x and
+                self.y == other.y and
+                self.birds == other.birds)
+    
     def __ne__(self, other):
         """Overrides the default implementation (unnecessary in Python 3)"""
         return not self.__eq__(other)

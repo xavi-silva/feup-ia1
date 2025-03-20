@@ -34,4 +34,25 @@ def easy_mode():
     return [branch3, branch1, branch2]
 
 
+def medium_mode():
+    birds = [Bird(i, BIRD_IMAGES[i]) for i in range(7)]
+
+    birds1 = deque([birds[0], birds[1],birds[2], birds[3]])
+    birds2 = deque([birds[1], birds[0],birds[3], birds[3]])
+    birds3 = deque([birds[3], birds[0],birds[2], birds[1]])
+    birds4 = deque([])
+    birds5 = deque([birds[1], birds[2],birds[4], birds[0]])
+    birds6 = deque([birds[5], birds[5],birds[4], birds[5]])
+    birds7 = deque([birds[4], birds[4],birds[5], birds[2]])
+    birds8 = deque([])
+
+    branch1 = Branch(200, 200, birds1, BRANCH_IMAGE, side="left")
+    branch2 = Branch(200, 400, birds2, BRANCH_IMAGE, side="left")
+    branch3 = Branch(200, 600, birds3, BRANCH_IMAGE, side="left")
+    branch4 = Branch(200, 800, birds4, BRANCH_IMAGE, side="left")
+    branch5 = Branch(900, 200, birds5, BRANCH_IMAGE, side="right")
+    branch6 = Branch(900, 400, birds6, BRANCH_IMAGE, side="right")
+    branch7 = Branch(900, 600, birds7, BRANCH_IMAGE, side="right")
+    branch8 = Branch(900, 800, birds8, BRANCH_IMAGE, side="right")
+    return [branch1, branch2, branch3, branch4, branch5, branch6, branch7, branch8]
 

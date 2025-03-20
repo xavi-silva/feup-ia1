@@ -16,7 +16,7 @@ BIRD_IMAGES = [
 
 BRANCH_IMAGE = pygame.image.load("../assets/branch.png")
 BIRD_IMAGES = [pygame.transform.scale(img, (100, 100)) for img in BIRD_IMAGES]
-BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (500, 500))
+BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (400, 150))
 
 def easy_mode():
     birds = [Bird(i, BIRD_IMAGES[i]) for i in range(7)]
@@ -46,13 +46,13 @@ def medium_mode():
     birds7 = deque([birds[4], birds[4],birds[5], birds[2]])
     birds8 = deque([])
 
-    branch1 = Branch(200, 200, birds1, BRANCH_IMAGE, side="left")
-    branch2 = Branch(200, 400, birds2, BRANCH_IMAGE, side="left")
-    branch3 = Branch(200, 600, birds3, BRANCH_IMAGE, side="left")
-    branch4 = Branch(200, 800, birds4, BRANCH_IMAGE, side="left")
-    branch5 = Branch(900, 200, birds5, BRANCH_IMAGE, side="right")
-    branch6 = Branch(900, 400, birds6, BRANCH_IMAGE, side="right")
-    branch7 = Branch(900, 600, birds7, BRANCH_IMAGE, side="right")
-    branch8 = Branch(900, 800, birds8, BRANCH_IMAGE, side="right")
+    branch1 = Branch(200, 100, birds1, BRANCH_IMAGE, side="left")
+    branch2 = Branch(200, 300, birds2, BRANCH_IMAGE, side="left")
+    branch3 = Branch(200, 500, birds3, BRANCH_IMAGE, side="left")
+    branch4 = Branch(200, 700, birds4, BRANCH_IMAGE, side="left")
+    branch5 = Branch(900, 100, birds5, BRANCH_IMAGE, side="right")
+    branch6 = Branch(900, 300, birds6, BRANCH_IMAGE, side="right")
+    branch7 = Branch(900, 500, birds7, BRANCH_IMAGE, side="right")
+    branch8 = Branch(900, 700, birds8, BRANCH_IMAGE, side="right")
     return [branch1, branch2, branch3, branch4, branch5, branch6, branch7, branch8]
 

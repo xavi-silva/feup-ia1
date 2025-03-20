@@ -33,7 +33,7 @@ else:
 
 initial_state = GameState(branches)
 
-search_algorithm = "dfs"
+search_algorithm = "dfss"
 solution_node = None
 
 if search_algorithm == "bfs":
@@ -113,12 +113,12 @@ def draw_game(branches):
         # Draw birds on top of branches
         for i, bird in enumerate(branch.birds):
             branch_width = branch.image.get_width()
-            bird_x = branch.x - (branch_width // 2) + 150 + (i * 100) if branch.side == "left" else branch.x + (branch_width // 2) - 150 - (i * 100)
+            bird_x = branch.x - (branch_width // 2) + 65 + (i * 100) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 100)
             bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
-            bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y))
+            bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 35))
             screen.blit(bird_img, bird_rect)
-        #for branch in branches:
-          #      pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
+        for branch in branches:
+               pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
 # Game Loop

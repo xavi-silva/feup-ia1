@@ -39,7 +39,7 @@ if branches == []:
 
 initial_state = GameState(branches)
 
-search_algorithm = "greedy"
+search_algorithm = "greedy_df"
 solution_node = None
 
 if search_algorithm == "bfs":

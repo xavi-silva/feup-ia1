@@ -5,7 +5,7 @@ from graph import breadth_first_search, depth_first_search, GameState
 from collections import deque
 from bird import Bird
 from branch import Branch
-import modes
+import loader
 
 # Initialize pygame
 pygame.init()
@@ -20,16 +20,22 @@ FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bird Sorter")
 
-difficulty = "medium"
+difficulty = "custom"
 
 if difficulty == "easy":
-    branches = modes.easy_mode()
+    branches = loader.load_branches_from_file("../states/easy.txt")
 elif difficulty == "medium":
-    branches = modes.medium_mode()
+    branches = loader.load_branches_from_file("../states/medium.txt")
 elif difficulty == "hard":
-    branches = modes.hard_mode()
+    branches = loader.load_branches_from_file("../states/hard.txt")
+elif difficulty == "custom":
+    branches = loader.load_branches_from_file("../states/custom.txt")
 else:
-    branches = modes.easy_mode()
+    branches = loader.easy_mode()
+
+if branches == []:
+    print("Invlid game state!")
+    pygame.quit()
 
 initial_state = GameState(branches)
 
@@ -60,45 +66,6 @@ if solution_node:
 else:
     print("No solution found.")
 
-#print("Initial State:")
-#for branch in branches:
-#    print(branch)
-
-# Generate child states
-#new_states = initial_state.generate_child_states()
-
-#print("\nGenerated States:")
-#for i, state in enumerate(new_states):
-#    print(f"State {i+1}:")
-#    print(state)  # Print the GameState object directly (uses __str__ method)
-#    print("------------------")
-
-#print("............")
-
-
-#for branch in branches:
-#    print(branch)
-
-#print("............")
-
-#s = game_logic.get_valid_moves(branches)
-#for pair in s:
-#    print(f"({pair[0]}, {pair[1]})")
-
-#game_logic.move_birds(branch3, branch1)
-#print("............")
-
-#s = (game_logic.get_valid_moves(branches))
-
-#for move in s:
-#    print(f"({move[0]}, {move[1]})")
-
-
-#s = branch3.full_one_species()
-#print(s)
-
-#for branch in branches:
-#    print(branch)
 sky = pygame.image.load("../assets/sky.webp")
 sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
 
@@ -174,19 +141,6 @@ while running:
                                 print("You Win!")
                                 running = False
 
-    #for event in pygame.event.get():
-    #    if event.type == pygame.QUIT:
-    #        running = False
-    #    elif event.type == pygame.MOUSEBUTTONDOWN:
-    #        for bird in birds:
-    #            if bird.rect.collidepoint(event.pos):
-    #                selected_bird = bird if not selected_bird else None
-    #        for branch in branches:
-    #            if branch.rect.collidepoint(event.pos) and selected_bird:
-    #                if branch.add_bird(selected_bird):
-    #                    birds.remove(selected_bird)
-    #                selected_bird = None
-    
     # Draw everything
     draw_game(branches)
     #for bird in birds:

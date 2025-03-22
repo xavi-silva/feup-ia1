@@ -81,6 +81,17 @@ class Branch(pygame.sprite.Sprite):
             return True
         return False
     
+    def evaluate(self):
+        points = 0
+        if self.full_one_species:
+            points += 100
+        current_bird = None
+        for bird in self.birds:
+            if bird == current_bird:
+                points += 1
+            current_bird = bird
+        return points
+    
     @classmethod
     def set_branch_size(cls, new_size):
         cls.branch_size = new_size  # Update class-wide branch size

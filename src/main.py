@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import breadth_first_search, depth_first_search, GameState
+from graph import breadth_first_search, depth_first_search, greedy_bf, greedy_df, GameState
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -20,7 +20,7 @@ FPS = 60
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bird Sorter")
 
-difficulty = "custom"
+difficulty = "medium"
 
 if difficulty == "easy":
     branches = loader.load_branches_from_file("../states/easy.txt")
@@ -39,13 +39,17 @@ if branches == []:
 
 initial_state = GameState(branches)
 
-search_algorithm = "dfss"
+search_algorithm = "greedy"
 solution_node = None
 
 if search_algorithm == "bfs":
     solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 elif search_algorithm == "dfs":
     solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "greedy_bf":
+    solution_node = greedy_bf(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "greedy_df":
+    solution_node = greedy_df(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 else:
     print("Invalid search algorithm.")
 

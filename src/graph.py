@@ -15,6 +15,7 @@ class TreeNode:
         child_node.parent = self
 
 class GameState:
+    #branches = []
     def __init__(self, branches):
         self.branches = tuple(branches)
     def __eq__(self, other):
@@ -49,11 +50,12 @@ class GameState:
                         child_states.append(new_state)
 
         return child_states
-
-
-
-
-# copied search algorithms from buckets example, needs adjustments
+    
+    def evaluate(self):
+        points = 0
+        for branch in self.branches:
+            points += branch.evaluate()
+        return points
 
 # Breadth-First Search
 def breadth_first_search(initial_state, goal_state_func, operators_func):
@@ -146,6 +148,78 @@ def iterative_deepening_search(initial_state, goal_state_func, operators_func, d
         if s:
             return s
     return None
+
+# Greedy Algorithm
+def greedy_bf(initial_state, check_win, new_states):
+    #print("\nStarting BFS Search")
+    root = TreeNode(initial_state)   # create the root node in the search tree
+    queue = deque([root])   # initialize the queue to store the nodes
+    visited = set([initial_state])
+    while queue:
+        node = queue.popleft()   # get first element in the queue
+        #print("\nExpanding State:")
+        #print(node.state)
+        if check_win(node.state.branches):   # check goal state
+            return node
+
+        #new_states = new_states(node.state) 
+        #print(f"Generated {len(new_states)} new states:")
+        #for i, state in enumerate(new_states, 1):
+            #print(f"State {i}:")
+            #print(state)
+            #print("------------------")
+
+        best_state = None
+        best_score = 0
+
+        # Evaluate each new state and select the best one
+        for state in new_states(node.state):
+            if state not in visited:
+                score = state.evaluate()  # Evaluate state
+                
+                if score > best_score:  # Keep track of the best state
+                    best_score = score
+                    best_state = state
+
+        # Expand only the best state
+        if best_state:
+            child = TreeNode(best_state, node)
+            queue.append(child)
+            visited.add(best_state)
+
+    return None
+
+
+def greedy_df(initial_state, check_win, new_states):
+    root = TreeNode(initial_state)  # Create the root node
+    stack = [root]  # Use a stack instead of a queue (DFS)
+    visited = set([initial_state])
+
+    while stack:
+        node = stack.pop()  # DFS: Get the last inserted node (LIFO)
+
+        if check_win(node.state.branches):  # Check goal state
+            return node  # Return the solution node
+
+        best_state = None
+        best_score = 0
+
+        # Evaluate all possible next states and pick the best one
+        for state in new_states(node.state):
+            if state not in visited:
+                score = state.evaluate()  # Evaluate state
+                
+                if score > best_score:  # Keep track of the best option
+                    best_score = score
+                    best_state = state
+
+        # Expand only the best state (Greedy choice)
+        if best_state:
+            child = TreeNode(best_state, node)
+            stack.append(child)  # Use stack for DFS behavior
+            visited.add(best_state)
+
+    return None  # No solution found
 
 # Auxiliar print function to show the solution
 def print_solution(node):

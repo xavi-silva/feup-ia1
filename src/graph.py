@@ -2,6 +2,7 @@ from collections import deque
 import game_logic
 from branch import Branch 
 from bird import Bird
+import heapq
 
 # A generic definition of a tree node holding a state of the problem
 class TreeNode:
@@ -220,6 +221,28 @@ def greedy_df(initial_state, check_win, new_states):
             visited.add(best_state)
 
     return None  # No solution found
+
+def a_star_search(initial_state, goal_state_func, operators_func):
+    root = TreeNode(initial_state)
+    priority_queue = []
+    heapq.heappush(priority_queue, (0, id(root), root)) #f(n) = g(n)->number of movements + h(n)-> greedy heuristic
+    visited = {}
+    visited[initial_state] = 0
+    while priority_queue:
+       _, _, node = heapq.heappop(priority_queue)
+       if goal_state_func(node.state.branches):
+           return node
+       g = visited[node.state] + 1 #g(n)
+       for state in operators_func(node.state):
+           h = 100 - state.evaluate()
+           f = g + h
+           if state not in visited or g < visited[state]:
+               visited[state] = g 
+               child = TreeNode(state, node)
+               heapq.heappush(priority_queue, (f, id(child), child))
+    return None
+
+
 
 # Auxiliar print function to show the solution
 def print_solution(node):

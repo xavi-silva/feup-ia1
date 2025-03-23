@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import breadth_first_search, depth_first_search, greedy_bf, greedy_df, GameState
+from graph import breadth_first_search, depth_first_search, greedy_bf, greedy_df, a_star_search, GameState
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -39,7 +39,7 @@ if branches == []:
 
 initial_state = GameState(branches)
 
-search_algorithm = "greedy_df"
+search_algorithm = "A*"
 solution_node = None
 
 if search_algorithm == "bfs":
@@ -50,6 +50,8 @@ elif search_algorithm == "greedy_bf":
     solution_node = greedy_bf(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 elif search_algorithm == "greedy_df":
     solution_node = greedy_df(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "A*":
+        solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 else:
     print("Invalid search algorithm.")
 
@@ -76,6 +78,8 @@ sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
 def draw_game(branches):
     #screen.fill(BACKGROUND_COLOR)  # Clear the screen
     screen.blit(sky, (0, 0))
+    score = font.render(f"Moves: {moves_count}", True, (0,0,0))
+    screen.blit(score, (490,50))
 
     for branch in branches:
         if not(branch.completed):
@@ -96,7 +100,8 @@ def draw_game(branches):
 # Game Loop
 selected_branch = None
 move_mode = False
-
+moves_count = 0
+font = pygame.font.Font(None, 36)
 draw_game(branches)
 pygame.time.delay(2000)
 running = True
@@ -130,10 +135,12 @@ while running:
                         move_mode = True
                     else:
                         if selected_branch and selected_branch != branch and not branch.completed:
-                            move_sound.play()
-                            game_logic.move_birds(selected_branch, branch)
+                            if (game_logic.move_birds(selected_branch, branch)):
+                                moves_count += 1
+                                print(moves_count)
+                                move_sound.play()
                             #sleep 1 second
-                            pygame.time.delay(1000)
+                            pygame.time.delay(500)
                             if (branch.full_one_species()):
                                 branch_sound.play()
                             selected_branch.selected = False

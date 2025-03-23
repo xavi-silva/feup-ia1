@@ -78,18 +78,19 @@ def draw_game(branches):
     screen.blit(sky, (0, 0))
 
     for branch in branches:
-        branch.update_color()
-        screen.blit(branch.image, branch.rect)
+        if not(branch.completed):
+            branch.update_color()
+            screen.blit(branch.image, branch.rect)
 
-        # Draw birds on top of branches
-        for i, bird in enumerate(branch.birds):
-            branch_width = branch.image.get_width()
-            bird_x = branch.x - (branch_width // 2) + 65 + (i * 100) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 100)
-            bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
-            bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 35))
-            screen.blit(bird_img, bird_rect)
-        for branch in branches:
-               pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
+            # Draw birds on top of branches
+            for i, bird in enumerate(branch.birds):
+                branch_width = branch.image.get_width()
+                bird_x = branch.x - (branch_width // 2) + 65 + (i * 100) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 100)
+                bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
+                bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 35))
+                screen.blit(bird_img, bird_rect)
+        #for branch in branches:
+              ## pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
 # Game Loop
@@ -128,7 +129,7 @@ while running:
 
                         move_mode = True
                     else:
-                        if selected_branch and selected_branch != branch:
+                        if selected_branch and selected_branch != branch and not branch.completed:
                             move_sound.play()
                             game_logic.move_birds(selected_branch, branch)
                             #sleep 1 second
@@ -144,6 +145,11 @@ while running:
                             if game_logic.check_win(branches):
                                 print("You Win!")
                                 running = False
+                        elif selected_branch and selected_branch == branch:
+                            selected_branch.selected = False
+                            selected_branch.update_color()
+                            selected_branch = None
+                            move_mode = False
 
     # Draw everything
     draw_game(branches)

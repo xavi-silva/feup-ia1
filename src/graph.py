@@ -277,17 +277,6 @@ def a_star_search(initial_state, goal_state_func, operators_func):
 
 # Hint Generator
 def give_hint(search_algorithm, mode, initial_state):
-    print("MISSING HINT LOGIC!")
-
-
-
-
-
-
-
-
-
-    
     if search_algorithm == "Breadth-First Search":
         solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
     elif search_algorithm == "Depth-First Search":
@@ -312,6 +301,15 @@ def give_hint(search_algorithm, mode, initial_state):
         elif mode == "Custom":
             solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
     
+    path = []
+    while node is not None:
+        path.append(node.state)
+        node = node.parent
+    
+    next_state = path[0]
+    return next_state
+
+
 
 
 # Auxiliar print function to show the solution

@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import breadth_first_search, depth_first_search, greedy_bf, greedy_df, a_star_search, GameState
+from graph import breadth_first_search, depth_first_search, greedy_search, a_star_search, uniform_cost_search, iterative_deepening_search, give_hint, GameState
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -12,7 +12,7 @@ pygame.init()
 pygame.mixer.init()
 
 # Game Constants
-WIDTH, HEIGHT = 1100, 800
+WIDTH, HEIGHT = 1100, 680
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 
@@ -21,6 +21,10 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bird Sorter")
 sky = pygame.image.load("../assets/sky.webp")
 sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
+hint = pygame.image.load("../assets/hint.webp")
+hint = pygame.transform.scale(hint, (100, 100))
+hint_rect = pygame.Rect(WIDTH - 100, HEIGHT - 100, 100, 100)  # Create a rectangle for the clickable area
+board = pygame.image.load("../assets/board.png")
 
 # Fonts
 font = pygame.font.Font(None, 36)
@@ -50,104 +54,54 @@ player_buttons = [
     {"label": "Bot", "rect": pygame.Rect(200, 220, 200, 50)}
 ]
 
-def select_mode():
-    running = True
-    mode = None
-    
-    while running:
-        screen.blit(sky, (0, 0))
-        title_text = title_font.render("Choose Mode", True, (0, 0, 0))
-        screen.blit(title_text, (220, 30))
-        
-        for button in mode_buttons:
-            pygame.draw.rect(screen, (255, 255, 255), button["rect"])  # White buttons
-            pygame.draw.rect(screen, (0, 0, 0), button["rect"], 2)  # Black border
-            text_surface = font.render(button["label"], True, (0, 0, 0))
-            text_rect = text_surface.get_rect(center=button["rect"].center)
-            screen.blit(text_surface, text_rect)
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                for button in mode_buttons:
-                    if button["rect"].collidepoint(event.pos):
-                        mode = button["label"]
-                        running = False
-                        break
-        
-        pygame.display.flip()
-    print(mode)
-    return mode
+def draw_buttons(buttons, hover_index):
+    for i, button in enumerate(buttons):
+        color = (255, 215, 0) if i == hover_index else (255, 255, 255)
+        pygame.draw.rect(screen, (0, 0, 0), button["rect"], border_radius=10)
+        pygame.draw.rect(screen, color, button["rect"], border_radius=10)
+        text_surface = font.render(button["label"], True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=button["rect"].center)
+        screen.blit(text_surface, text_rect)
 
-def select_algorithm():
+def handle_menu(title, buttons):
     running = True
-    algorithm = None
+    choice = None
+    hover_index = -1
     
     while running:
         screen.blit(sky, (0, 0))
-        title_text = title_font.render("Select Algorithm", True, (0, 0, 0))
-        screen.blit(title_text, (160, 10))
+        title_text = title_font.render(title, True, (0, 0, 0))
+        screen.blit(title_text, (screen.get_width() // 2 - title_text.get_width() // 2, 30))
         
-        for button in algorithm_buttons:
-            pygame.draw.rect(screen, (255, 255, 255), button["rect"])  # White buttons
-            pygame.draw.rect(screen, (0, 0, 0), button["rect"], 2)  # Black border
-            text_surface = font.render(button["label"], True, (0, 0, 0))
-            text_rect = text_surface.get_rect(center=button["rect"].center)
-            screen.blit(text_surface, text_rect)
+        draw_buttons(buttons, hover_index)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                for button in algorithm_buttons:
+            elif event.type == pygame.MOUSEMOTION:
+                hover_index = -1
+                for i, button in enumerate(buttons):
                     if button["rect"].collidepoint(event.pos):
-                        algorithm = button["label"]
+                        hover_index = i
+                        break
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for button in buttons:
+                    if button["rect"].collidepoint(event.pos):
+                        choice = button["label"]
                         running = False
                         break
         
         pygame.display.flip()
     
-    pygame.quit()
-    print(algorithm)
-    return algorithm
-
-def select_player():
-    running = True
-    player = None
-    
-    while running:
-        screen.blit(sky, (0, 0))
-        title_text = title_font.render("Select Player", True, (0, 0, 0))
-        screen.blit(title_text, (220, 50))
-        
-        for button in player_buttons:
-            pygame.draw.rect(screen, (255, 255, 255), button["rect"])  # White buttons
-            pygame.draw.rect(screen, (0, 0, 0), button["rect"], 2)  # Black border
-            text_surface = font.render(button["label"], True, (0, 0, 0))
-            text_rect = text_surface.get_rect(center=button["rect"].center)
-            screen.blit(text_surface, text_rect)
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                for button in player_buttons:
-                    if button["rect"].collidepoint(event.pos):
-                        player = button["label"]
-                        running = False
-                        break
-        
-        pygame.display.flip()
-    print(player)
-    return player
+    return choice
 
 def draw_game(branches):
     #screen.fill(BACKGROUND_COLOR)  # Clear the screen
     screen.blit(sky, (0, 0))
-    score = font.render(f"Moves: {moves_count}", True, (0,0,0))
-    screen.blit(score, (490,50))
-
+    score = font.render(f"Moves: {moves_count}", True, (255,255,255))
+    screen.blit(board, (WIDTH/2 - 140, 0))
+    screen.blit(score, (495,90))
+    screen.blit(hint, (WIDTH - 100, HEIGHT - 100))
     for branch in branches:
         if not(branch.completed):
             branch.update_color()
@@ -164,9 +118,9 @@ def draw_game(branches):
               ## pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
-mode = select_mode()
-player = select_player()
-search_algorithm = select_algorithm()
+mode = handle_menu("Select Mode", mode_buttons)
+player = handle_menu("Select Player", player_buttons)
+search_algorithm = handle_menu("Select Algorithm", algorithm_buttons)
 
 if mode == "Easy":
     branches = loader.load_branches_from_file("../states/easy.txt")
@@ -177,22 +131,35 @@ elif mode == "Hard":
 elif mode == "Custom":
     branches = loader.load_branches_from_file("../states/custom.txt")
 else:
-    print("Invlid game state!")
+    print("Invalid game state!")
     pygame.quit()
 
 initial_state = GameState(branches)
 solution_node = None
 
-if search_algorithm == "bfs":
+if search_algorithm == "Breadth-First Search":
     solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "dfs":
+elif search_algorithm == "Depth-First Search":
     solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "greedy_bf":
-    solution_node = greedy_bf(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "greedy_df":
-    solution_node = greedy_df(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "Iterative Deepening":
+    solution_node = iterative_deepening_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states(), 20)
+elif search_algorithm == "Uniform Cost":
+    solution_node = uniform_cost_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "Greedy":
+    solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 elif search_algorithm == "A*":
         solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "Weighted A*":
+        solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+elif search_algorithm == "Auto":
+    if mode == "Easy":
+        search_algorithm = "A*"
+    elif mode == "Medium":
+        search_algorithm = "A*"
+    elif mode == "Hard":
+        search_algorithm = "Greedy"
+    elif mode == "Custom":
+        search_algorithm = "Greedy"
 else:
     print("Invalid search algorithm.")
 
@@ -236,6 +203,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            if hint_rect.collidepoint(event.pos):  
+                        give_hint(search_algorithm, mode, initial_state)
+                        break
             for branch in branches:
                 if branch.rect.collidepoint(event.pos):
                     if not move_mode:

@@ -131,7 +131,7 @@ def dls_recursive(state, goal_state_func, operators_func, visited, parent, depth
     visited.add(state)
     node = TreeNode(state, parent)
 
-    if goal_state_func(state):
+    if goal_state_func(state.branches):
         return node  # Return the goal node
 
     for neighbor in operators_func(state):
@@ -148,6 +148,39 @@ def iterative_deepening_search(initial_state, goal_state_func, operators_func, d
         s = depth_limited_search(initial_state, goal_state_func, operators_func, current_limit)
         if s:
             return s
+    return None
+
+# Uniform Cost Search
+def uniform_cost_search(initial_state, goal_state_func, operators_func):
+    print("\nStarting Uniform Cost Search")
+    root = TreeNode(initial_state)
+    priority_queue = [(0, root)]  # (cost, node)
+    visited = set()
+    
+    while priority_queue:
+        current_cost, node = heapq.heappop(priority_queue)
+        print("\nExpanding State:")
+        print(node.state)
+        
+        if goal_state_func(node.state):
+            return node
+        
+        if node.state in visited:
+            continue
+        visited.add(node.state)
+        
+        new_states = operators_func(node.state)
+        print(f"Generated {len(new_states)} new states:")
+        for i, state in enumerate(new_states, 1):
+            print(f"State {i}:")
+            print(state)
+            print("------------------")
+        
+        for state, cost in operators_func(node.state):
+            if state not in visited:
+                child = TreeNode(state, node, current_cost + cost)
+                heapq.heappush(priority_queue, (child.cost, child))
+    
     return None
 
 # Greedy Algorithm
@@ -191,7 +224,7 @@ def greedy_bf(initial_state, check_win, new_states):
     return None
 
 
-def greedy_df(initial_state, check_win, new_states):
+def greedy_search(initial_state, check_win, new_states):
     root = TreeNode(initial_state)  # Create the root node
     stack = [root]  # Use a stack instead of a queue (DFS)
     visited = set([initial_state])
@@ -242,6 +275,43 @@ def a_star_search(initial_state, goal_state_func, operators_func):
                heapq.heappush(priority_queue, (f, id(child), child))
     return None
 
+# Hint Generator
+def give_hint(search_algorithm, mode, initial_state):
+    print("MISSING HINT LOGIC!")
+
+
+
+
+
+
+
+
+
+    
+    if search_algorithm == "Breadth-First Search":
+        solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Depth-First Search":
+        solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Iterative Deepening":
+        solution_node = iterative_deepening_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states(), 20)
+    elif search_algorithm == "Uniform Cost":
+        solution_node = uniform_cost_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Greedy":
+        solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "A*":
+            solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Weighted A*":
+            solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Auto":
+        if mode == "Easy":
+            solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+        elif mode == "Medium":
+            solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+        elif mode == "Hard":
+            solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+        elif mode == "Custom":
+            solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    
 
 
 # Auxiliar print function to show the solution

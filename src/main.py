@@ -204,7 +204,7 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if hint_rect.collidepoint(event.pos):   
-                        state = give_hint(search_algorithm, mode, initial_state)
+                        branches = give_hint(search_algorithm, mode, GameState(branches))
                         break
             for branch in branches:
                 if branch.rect.collidepoint(event.pos):

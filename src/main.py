@@ -13,6 +13,7 @@ pygame.mixer.init()
 
 # Game Constants
 WIDTH, HEIGHT = 1100, 680
+BUTTON_WIDTH, BUTTON_HEIGHT = 250, 50
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 
@@ -36,26 +37,26 @@ title_font = pygame.font.Font(None, 48)
 
 # Menu Buttons
 mode_buttons = [
-    {"label": "Easy", "rect": pygame.Rect(WIDTH/2 - 125, 100, 250, 50)},
-    {"label": "Medium", "rect": pygame.Rect(WIDTH/2 - 125, 160, 250, 50)},
-    {"label": "Hard", "rect": pygame.Rect(WIDTH/2 - 125, 220, 250, 50)},
-    {"label": "Custom", "rect": pygame.Rect(WIDTH/2 - 125, 280, 250, 50)}
+    {"label": "Easy", "rect": pygame.Rect(WIDTH/2 - 125, 100, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Medium", "rect": pygame.Rect(WIDTH/2 - 125, 160, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Hard", "rect": pygame.Rect(WIDTH/2 - 125, 220, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Custom", "rect": pygame.Rect(WIDTH/2 - 125, 280, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
 
 algorithm_buttons = [
-    {"label": "Auto", "rect": pygame.Rect(WIDTH/2 - 125, 100, 250, 50)},
-    {"label": "Breadth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 150, 250, 50)},
-    {"label": "Depth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 200, 250, 50)},
-    {"label": "Iterative Deepening", "rect": pygame.Rect(WIDTH/2 - 125, 250, 250, 50)},
-    {"label": "Uniform Cost", "rect": pygame.Rect(WIDTH/2 - 125, 300, 250, 50)},
-    {"label": "Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 350, 250, 50)},
-    {"label": "A*", "rect": pygame.Rect(WIDTH/2 - 125, 400, 250, 50)},
-    {"label": "Weighted A*", "rect": pygame.Rect(WIDTH/2 - 125, 450, 250, 50)}
+    {"label": "Auto", "rect": pygame.Rect(WIDTH/2 - 125, 100, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Breadth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 150, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Depth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 200, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Iterative Deepening", "rect": pygame.Rect(WIDTH/2 - 125, 250, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Uniform Cost", "rect": pygame.Rect(WIDTH/2 - 125, 300, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 350, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "A*", "rect": pygame.Rect(WIDTH/2 - 125, 400, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Weighted A*", "rect": pygame.Rect(WIDTH/2 - 125, 450, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
 
 player_buttons = [
-    {"label": "You", "rect": pygame.Rect(WIDTH/2 - 125, 150, 250, 50)},
-    {"label": "Bot", "rect": pygame.Rect(WIDTH/2 - 125, 220, 250, 50)}
+    {"label": "You", "rect": pygame.Rect(WIDTH/2 - 125, 150, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Bot", "rect": pygame.Rect(WIDTH/2 - 125, 220, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
 
 def draw_buttons(buttons, hover_index):

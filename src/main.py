@@ -19,12 +19,16 @@ FPS = 60
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bird Sorter")
-sky = pygame.image.load("../assets/sky.webp")
+sky = pygame.image.load("../assets/sky.png")
 sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
-hint = pygame.image.load("../assets/hint.webp")
+hint = pygame.image.load("../assets/hint.png")
 hint = pygame.transform.scale(hint, (100, 100))
 hint_rect = pygame.Rect(WIDTH - 100, HEIGHT - 100, 100, 100)  # Create a rectangle for the clickable area
 board = pygame.image.load("../assets/board.png")
+button_board = pygame.image.load("../assets/button.png")
+button_board = pygame.transform.scale(button_board, (250, 50))
+menu = pygame.image.load("../assets/menu.gif")
+menu = pygame.transform.scale(menu, (WIDTH, HEIGHT))
 
 # Fonts
 font = pygame.font.Font(None, 36)
@@ -32,33 +36,34 @@ title_font = pygame.font.Font(None, 48)
 
 # Menu Buttons
 mode_buttons = [
-    {"label": "Easy", "rect": pygame.Rect(200, 100, 200, 50)},
-    {"label": "Medium", "rect": pygame.Rect(200, 160, 200, 50)},
-    {"label": "Hard", "rect": pygame.Rect(200, 220, 200, 50)},
-    {"label": "Custom", "rect": pygame.Rect(200, 280, 200, 50)}
+    {"label": "Easy", "rect": pygame.Rect(WIDTH/2 - 125, 100, 250, 50)},
+    {"label": "Medium", "rect": pygame.Rect(WIDTH/2 - 125, 160, 250, 50)},
+    {"label": "Hard", "rect": pygame.Rect(WIDTH/2 - 125, 220, 250, 50)},
+    {"label": "Custom", "rect": pygame.Rect(WIDTH/2 - 125, 280, 250, 50)}
 ]
 
 algorithm_buttons = [
-    {"label": "Auto", "rect": pygame.Rect(200, 50, 200, 40)},
-    {"label": "Breadth-First Search", "rect": pygame.Rect(200, 100, 200, 40)},
-    {"label": "Depth-First Search", "rect": pygame.Rect(200, 150, 200, 40)},
-    {"label": "Iterative Deepening", "rect": pygame.Rect(200, 200, 200, 40)},
-    {"label": "Uniform Cost", "rect": pygame.Rect(200, 250, 200, 40)},
-    {"label": "Greedy", "rect": pygame.Rect(200, 300, 200, 40)},
-    {"label": "A*", "rect": pygame.Rect(200, 350, 200, 40)},
-    {"label": "Weighted A*", "rect": pygame.Rect(200, 400, 200, 40)}
+    {"label": "Auto", "rect": pygame.Rect(WIDTH/2 - 125, 100, 250, 50)},
+    {"label": "Breadth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 150, 250, 50)},
+    {"label": "Depth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 200, 250, 50)},
+    {"label": "Iterative Deepening", "rect": pygame.Rect(WIDTH/2 - 125, 250, 250, 50)},
+    {"label": "Uniform Cost", "rect": pygame.Rect(WIDTH/2 - 125, 300, 250, 50)},
+    {"label": "Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 350, 250, 50)},
+    {"label": "A*", "rect": pygame.Rect(WIDTH/2 - 125, 400, 250, 50)},
+    {"label": "Weighted A*", "rect": pygame.Rect(WIDTH/2 - 125, 450, 250, 50)}
 ]
 
 player_buttons = [
-    {"label": "You", "rect": pygame.Rect(200, 150, 200, 50)},
-    {"label": "Bot", "rect": pygame.Rect(200, 220, 200, 50)}
+    {"label": "You", "rect": pygame.Rect(WIDTH/2 - 125, 150, 250, 50)},
+    {"label": "Bot", "rect": pygame.Rect(WIDTH/2 - 125, 220, 250, 50)}
 ]
 
 def draw_buttons(buttons, hover_index):
     for i, button in enumerate(buttons):
-        color = (255, 215, 0) if i == hover_index else (255, 255, 255)
+        color = (0, 0, 0) if i == hover_index else (196, 164, 132)
         pygame.draw.rect(screen, (0, 0, 0), button["rect"], border_radius=10)
         pygame.draw.rect(screen, color, button["rect"], border_radius=10)
+        screen.blit(button_board, (button["rect"].left, button["rect"].top))
         text_surface = font.render(button["label"], True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=button["rect"].center)
         screen.blit(text_surface, text_rect)
@@ -69,7 +74,7 @@ def handle_menu(title, buttons):
     hover_index = -1
     
     while running:
-        screen.blit(sky, (0, 0))
+        screen.blit(menu, (0, 0))
         title_text = title_font.render(title, True, (0, 0, 0))
         screen.blit(title_text, (screen.get_width() // 2 - title_text.get_width() // 2, 30))
         
@@ -198,7 +203,6 @@ branch_sound = pygame.mixer.Sound("../sounds/leaves.wav")
 clock = pygame.time.Clock()
 selected_bird = None
 while running:
-    screen.fill(BACKGROUND_COLOR)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

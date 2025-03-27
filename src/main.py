@@ -73,6 +73,10 @@ def handle_menu(title, buttons):
     running = True
     choice = None
     hover_index = -1
+
+    if title != "Select Mode":
+        back_button = {"label": "Back", "rect": pygame.Rect(WIDTH/2 - 125, HEIGHT - 80, BUTTON_WIDTH, BUTTON_HEIGHT)}
+        buttons = buttons + [back_button]
     
     while running:
         screen.blit(menu, (0, 0))
@@ -83,7 +87,8 @@ def handle_menu(title, buttons):
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                    pygame.quit()
+                    exit()
             elif event.type == pygame.MOUSEMOTION:
                 hover_index = -1
                 for i, button in enumerate(buttons):
@@ -124,10 +129,31 @@ def draw_game(branches):
               ## pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
-mode = handle_menu("Select Mode", mode_buttons)
-player = handle_menu("Select Player", player_buttons)
-search_algorithm = handle_menu("Select Algorithm", algorithm_buttons)
+while True:
+    mode = handle_menu("Select Mode", mode_buttons)
+    if mode is None:
+        pygame.quit()
+        exit()
 
+    if mode in ["Easy", "Medium", "Hard", "Custom"]:
+        while True:
+            player = handle_menu("Select Player", player_buttons)
+            if player == "Back":
+                break  
+            
+            while True:
+                search_algorithm = handle_menu("Select Algorithm", algorithm_buttons)
+                if search_algorithm == "Back":
+                    break 
+
+                break
+
+            if search_algorithm != "Back":
+                break  
+
+        if player != "Back" and search_algorithm != "Back":
+            break 
+        
 if mode == "Easy":
     branches = loader.load_branches_from_file("../states/easy.txt")
 elif mode == "Medium":

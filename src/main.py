@@ -153,7 +153,7 @@ while True:
 
         if player != "Back" and search_algorithm != "Back":
             break 
-        
+
 if mode == "Easy":
     branches = loader.load_branches_from_file("../states/easy.txt")
 elif mode == "Medium":
@@ -212,6 +212,54 @@ if solution_node:
 else:
     print("No solution found.")
 
+# Draw the win screen
+def handle_win_screen(moves_count):
+    win_font = pygame.font.Font(None, 72)
+    running = True
+    hover_index = -1
+    wood_color = (87, 75, 56)
+
+    menu_button = {"label": "Menu", "rect": pygame.Rect(WIDTH/2 - 125, 400, BUTTON_WIDTH, BUTTON_HEIGHT)}
+    exit_button = {"label": "Exit", "rect": pygame.Rect(WIDTH/2 - 125, 470, BUTTON_WIDTH, BUTTON_HEIGHT)}
+    buttons = [menu_button, exit_button]
+
+    while running:
+        screen.blit(sky, (0, 0))
+        screen.blit(board, (WIDTH/2 - 140, 0))
+
+        move_text = font.render(f"Moves: {moves_count}", True, (255, 255, 255))
+        move_rect = move_text.get_rect(center=(WIDTH // 2, 90))
+        screen.blit(move_text, move_rect)
+
+        title_text = win_font.render("YOU WIN!", True, wood_color)
+        title_rect = title_text.get_rect(center=(WIDTH // 2, 310))
+        screen.blit(title_text, title_rect)
+
+        draw_buttons(buttons, hover_index)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEMOTION:
+                hover_index = -1
+                for i, button in enumerate(buttons):
+                    if button["rect"].collidepoint(event.pos):
+                        hover_index = i
+                        break
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                for button in buttons:
+                    if button["rect"].collidepoint(event.pos):
+                        if button["label"] == "Menu":
+                            return "menu"
+                        elif button["label"] == "Exit":
+                            pygame.quit()
+                            exit()
+
+        pygame.display.flip()
+
+
+
 # Game Loop
 selected_branch = None
 move_mode = False
@@ -268,6 +316,9 @@ while running:
 
                             if game_logic.check_win(branches):
                                 print("You Win!")
+                                action = handle_win_screen(moves_count)
+                                if action == "menu":
+                                    exec(open("main.py").read())  # Reexecuta o script
                                 running = False
                         elif selected_branch and selected_branch == branch:
                             selected_branch.selected = False

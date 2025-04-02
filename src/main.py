@@ -12,7 +12,7 @@ pygame.init()
 pygame.mixer.init()
 
 # Game Constants
-WIDTH, HEIGHT = 1100, 680
+WIDTH, HEIGHT = 1200, 800
 BUTTON_WIDTH, BUTTON_HEIGHT = 250, 50
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
@@ -121,7 +121,7 @@ def draw_game(branches):
             # Draw birds on top of branches
             for i, bird in enumerate(branch.birds):
                 branch_width = branch.image.get_width()
-                bird_x = branch.x - (branch_width // 2) + 65 + (i * 100) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 100)
+                bird_x = branch.x - (branch_width // 2) + 65 + (i * 75) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 75)
                 bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
                 bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 35))
                 screen.blit(bird_img, bird_rect)

@@ -76,6 +76,8 @@ class Branch(pygame.sprite.Sprite):
         return not self.birds
 
     def full_one_species(self):
+        if len(self.birds) == 0:
+            return False
         top_birds = self.get_top()
         if top_birds[1] == Branch.branch_size:
             return True
@@ -83,13 +85,14 @@ class Branch(pygame.sprite.Sprite):
     
     def evaluate(self):
         points = 0
-        if self.full_one_species:
+        if self.full_one_species():
             points += 100
         current_bird = None
-        for bird in self.birds:
-            if bird == current_bird:
-                points += 1
-            current_bird = bird
+        if self.birds:
+            for bird in self.birds:
+                if bird == current_bird:
+                    points += 1
+                current_bird = bird
         return points
     
     @classmethod

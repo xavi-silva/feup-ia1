@@ -275,10 +275,21 @@ def a_star_search(initial_state, goal_state_func, operators_func):
                heapq.heappush(priority_queue, (f, id(child), child))
     return None
 
+def move_done(state1, state2):
+    branches1 = state1.branches
+    branches2 = state2.branches
+    origin = None
+    destination = None
+    for i in range(len(branches1)):
+        if branches1[i] != branches2[i]:
+            if len(branches1[i].birds) > len(branches2[i].birds):
+                origin = branches1[i]
+            if len(branches2[i].birds) > len(branches1[i].birds):
+                destination = branches1[i]
+    return (origin, destination)
+
 # Hint Generator
 def give_hint(search_algorithm, mode, initial_state):
-    # BAD LOGIC.....
-
     print("INITIAL")
     print(initial_state)
     if search_algorithm == "Breadth-First Search":
@@ -310,13 +321,9 @@ def give_hint(search_algorithm, mode, initial_state):
         path.append(solution_node.state)
         solution_node = solution_node.parent
     
-    print("path")
-    for state in path:
-        print("state")
-        print(state)
+    current_state = path[-1]
     next_state = path[-2]
-    return (origin_branch, destination_branch)
-
+    return move_done(current_state, next_state)
 
 
 

@@ -12,9 +12,9 @@ BIRD_IMAGES = [
     pygame.image.load("../assets/bird5.png"),
     pygame.image.load("../assets/bird6.png"),
     pygame.image.load("../assets/bird7.png"),
-    pygame.image.load("../assets/bird7.png"),
-    pygame.image.load("../assets/bird7.png"),
-    pygame.image.load("../assets/bird7.png"),
+    pygame.image.load("../assets/bird8.png"),
+    pygame.image.load("../assets/bird9.png"),
+    pygame.image.load("../assets/bird10.png"),
 ]
 
 BRANCH_IMAGE = pygame.image.load("../assets/branch.png")

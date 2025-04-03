@@ -16,6 +16,7 @@ WIDTH, HEIGHT = 1200, 680
 BUTTON_WIDTH, BUTTON_HEIGHT = 250, 50
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
+undo_stack = []
 
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -30,6 +31,10 @@ button_board = pygame.image.load("../assets/button.png")
 button_board = pygame.transform.scale(button_board, (250, 50))
 menu = pygame.image.load("../assets/menu.gif")
 menu = pygame.transform.scale(menu, (WIDTH, HEIGHT))
+undo_img = pygame.image.load("../assets/undo_move.png")
+undo_img = pygame.transform.scale(undo_img, (75, 75))
+undo_rect = pygame.Rect(20, HEIGHT - 75, 75, 75)
+
 #pause = pygame.image.load("../assets/pause.png")
 #pause = pygame.transform.scale(hint, (75, 75))
 
@@ -116,6 +121,7 @@ def draw_game(branches):
     screen.blit(board, (WIDTH/2 - 140, 0))
     screen.blit(score, (495,90))
     if player == "You":
+        screen.blit(undo_img, (undo_rect.x, undo_rect.y))
         screen.blit(hint, (WIDTH - 75, HEIGHT - 75))
     #if player == "Bot":
         #screen.blit(pause, (WIDTH - 75, HEIGHT - 75))
@@ -339,7 +345,9 @@ while running:
                 print(f"Destin  = {destination}")
                 moves_count += 1
                 move_sound.play()
-
+            elif player == "You" and undo_rect.collidepoint(event.pos) and undo_stack:
+                branches = undo_stack.pop()
+                moves_count += 1
             else:
                 for branch in branches:
                     if player == "You" and branch.rect.collidepoint(event.pos):
@@ -355,25 +363,27 @@ while running:
                             move_mode = True
                         else:
                             if selected_branch and selected_branch != branch and not branch.completed:
-                                if (game_logic.move_birds(selected_branch, branch)):
-                                    moves_count += 1
-                                    move_sound.play()
-                                #sleep 1 second
-                                pygame.time.delay(500)
-                                if (branch.full_one_species()):
-                                    branch_sound.play()
-                                selected_branch.selected = False
-                                selected_branch.update_color()
+                                if game_logic.can_move_birds(selected_branch, branch):
+                                    undo_stack.append(Branch.clone_all_branches(branches, loader.BRANCH_IMAGE))
+                                    if game_logic.move_birds(selected_branch, branch):
+                                        moves_count += 1
+                                        move_sound.play()
+                                        pygame.time.delay(500)
 
-                                selected_branch = None
-                                move_mode = False
+                                        if branch.full_one_species():
+                                            branch_sound.play()
 
-                                if game_logic.check_win(branches):
-                                    print("You Win!")
-                                    action = handle_win_screen(moves_count)
-                                    if action == "menu":
-                                        exec(open("main.py").read())  # Reexecuta o script
-                                    running = False
+                                        selected_branch.selected = False
+                                        selected_branch.update_color()
+                                        selected_branch = None
+                                        move_mode = False
+
+                                    if game_logic.check_win(branches):
+                                        print("You Win!")
+                                        action = handle_win_screen(moves_count)
+                                        if action == "menu":
+                                            exec(open("main.py").read())  # Reexecuta o script
+                                        running = False
                             elif selected_branch and selected_branch == branch:
                                 selected_branch.selected = False
                                 selected_branch.update_color()

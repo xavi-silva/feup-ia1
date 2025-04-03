@@ -1,5 +1,6 @@
 import pygame
 from collections import deque
+from bird import Bird
 
 class Branch(pygame.sprite.Sprite):
     branch_size = 4
@@ -98,6 +99,16 @@ class Branch(pygame.sprite.Sprite):
     @classmethod
     def set_branch_size(cls, new_size):
         cls.branch_size = new_size  # Update class-wide branch size
+
+    @staticmethod
+    def clone_all_branches(branches, branch_image):
+        cloned = []
+        for branch in branches:
+            new_birds = [Bird(bird.bird_type, bird.image) for bird in branch.birds]
+            new_branch = Branch(branch.x, branch.y, new_birds, branch_image, branch.side)
+            new_branch.completed = branch.completed
+            cloned.append(new_branch)
+        return cloned
 
 
         

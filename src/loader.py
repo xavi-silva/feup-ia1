@@ -19,7 +19,7 @@ BIRD_IMAGES = [
 
 BRANCH_IMAGE = pygame.image.load("../assets/branch.png")
 BIRD_IMAGES = [pygame.transform.scale(img, (70, 70)) for img in BIRD_IMAGES]
-BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (500, 150))
+BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (500, 90))
 
 BRANCH_GAP = 100
 
@@ -31,8 +31,8 @@ def load_branches_from_file(filename):
         branch_size = int(file.readline().strip()[0])
         Branch.branch_size = branch_size
 
-        left_y = 35
-        right_y = 35
+        left_y = 50
+        right_y = 50
         left_x = 250
         right_x = 950
         for line in file:

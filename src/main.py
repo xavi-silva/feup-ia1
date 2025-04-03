@@ -129,10 +129,10 @@ def draw_game(branches):
                 branch_width = branch.image.get_width()
                 bird_x = branch.x - (branch_width // 2) + 65 + (i * 75) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 75)
                 bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
-                bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 35))
+                bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 18))
                 screen.blit(bird_img, bird_rect)
-        #for branch in branches:
-              ## pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
+        for branch in branches:
+            pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
 player = None

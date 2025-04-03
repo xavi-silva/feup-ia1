@@ -6,6 +6,8 @@ class Bird(pygame.sprite.Sprite):
         self.image = bird_image
         self.bird_type = bird_type
         self.selected = False
+        self.rect = self.image.get_rect()
+
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -23,10 +25,4 @@ class Bird(pygame.sprite.Sprite):
 
     def __str__(self):
         return f"({str(self.bird_type)})"
-    
-    def update(self):
-        # Visual effect when selected
-        if self.selected:
-            self.rect.y -= 2  # Small lift effect
-        else:
-            self.rect.y += 2  # Reset position
+

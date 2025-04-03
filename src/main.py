@@ -385,12 +385,21 @@ while running:
                 paused = not paused
             elif player=="You" and pause_hint_rect.collidepoint(event.pos):   
                 (origin, destination) = give_hint(search_algorithm, mode, GameState(branches))
-                game_logic.move_birds(origin, destination)
-                pygame.time.delay(500)
-                print(f"Origin  = {origin}")
-                print(f"Destin  = {destination}")
-                moves_count += 1
-                move_sound.play()
+                #game_logic.move_birds(branches[origin], branches[destination])
+                #branches[origin].update_color()
+                if selected_branch:
+                    game_logic.move_birds(branches[origin], branches[destination])
+                    moves_count += 1
+                    move_sound.play()
+                    selected_branch.update_color()
+                    selected_branch.selected = False
+                    selected_branch = None
+                else:
+                    selected_branch = branches[origin]
+                    bird_sound.play()
+                    selected_branch.selected = True
+                    selected_branch.update_color()
+                    move_mode = True
             elif player == "You" and undo_rect.collidepoint(event.pos) and undo_stack:
                 branches = undo_stack.pop()
                 moves_count += 1

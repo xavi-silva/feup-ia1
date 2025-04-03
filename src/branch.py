@@ -109,7 +109,9 @@ class Branch(pygame.sprite.Sprite):
             new_branch.completed = branch.completed
             cloned.append(new_branch)
         return cloned
-
-
         
-
+    def highlight(self):
+        red_overlay = pygame.Surface(self.image.get_size(), pygame.SRCALPHA)
+        red_overlay.fill((255, 0, 0, 100))  # Red with 100 alpha (transparency)
+        self.image = self.original_image.copy()
+        self.image.blit(red_overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)

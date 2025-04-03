@@ -12,11 +12,16 @@ BIRD_IMAGES = [
     pygame.image.load("../assets/bird5.png"),
     pygame.image.load("../assets/bird6.png"),
     pygame.image.load("../assets/bird7.png"),
+    pygame.image.load("../assets/bird7.png"),
+    pygame.image.load("../assets/bird7.png"),
+    pygame.image.load("../assets/bird7.png"),
 ]
 
 BRANCH_IMAGE = pygame.image.load("../assets/branch.png")
-BIRD_IMAGES = [pygame.transform.scale(img, (100, 100)) for img in BIRD_IMAGES]
-BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (400, 150))
+BIRD_IMAGES = [pygame.transform.scale(img, (70, 70)) for img in BIRD_IMAGES]
+BRANCH_IMAGE = pygame.transform.scale(BRANCH_IMAGE, (500, 150))
+
+BRANCH_GAP = 100
 
 def load_branches_from_file(filename):
     branches = []
@@ -26,10 +31,10 @@ def load_branches_from_file(filename):
         branch_size = int(file.readline().strip()[0])
         Branch.branch_size = branch_size
 
-        left_y = 75
-        right_y = 75
-        left_x = 200
-        right_x = 900
+        left_y = 35
+        right_y = 35
+        left_x = 250
+        right_x = 950
         for line in file:
             line = line.strip()
             
@@ -43,13 +48,11 @@ def load_branches_from_file(filename):
             if line == "-":
                 if side == "left":
                     branch = Branch(left_x, left_y, [], BRANCH_IMAGE, side)
-                    left_x = 200
-                    left_y += 150
+                    left_y += BRANCH_GAP
 
                 else:
                     branch = Branch(right_x, right_y, [], BRANCH_IMAGE, side)
-                    right_x = 900
-                    right_y += 150
+                    right_y += BRANCH_GAP
             else:
                 birds = [Bird(int(char), BIRD_IMAGES[int(char)]) for char in line] if line else []
                 if len(birds) > Branch.branch_size:
@@ -57,13 +60,11 @@ def load_branches_from_file(filename):
                     return []
                 if side == "left":
                     branch = Branch(left_x, left_y, birds, BRANCH_IMAGE, side)
-                    left_x = 200
-                    left_y += 150
+                    left_y += BRANCH_GAP
 
                 else:
                     branch = Branch(right_x, right_y, birds, BRANCH_IMAGE, side)
-                    right_x = 900
-                    right_y += 150
+                    right_y += BRANCH_GAP
     
             branches.append(branch)
     return branches    

@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import breadth_first_search, depth_first_search, greedy_search, a_star_search, uniform_cost_search, iterative_deepening_search, give_hint, GameState
+from graph import breadth_first_search, depth_first_search, greedy_search, a_star_search, uniform_cost_search, iterative_deepening_search, give_hint, GameState, move_done
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -12,7 +12,7 @@ pygame.init()
 pygame.mixer.init()
 
 # Game Constants
-WIDTH, HEIGHT = 1100, 680
+WIDTH, HEIGHT = 1200, 680
 BUTTON_WIDTH, BUTTON_HEIGHT = 250, 50
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
@@ -23,13 +23,15 @@ pygame.display.set_caption("Bird Sorter")
 sky = pygame.image.load("../assets/sky.png")
 sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
 hint = pygame.image.load("../assets/hint.png")
-hint = pygame.transform.scale(hint, (100, 100))
+hint = pygame.transform.scale(hint, (75, 75))
 hint_rect = pygame.Rect(WIDTH - 100, HEIGHT - 100, 100, 100)  # Create a rectangle for the clickable area
 board = pygame.image.load("../assets/board.png")
 button_board = pygame.image.load("../assets/button.png")
 button_board = pygame.transform.scale(button_board, (250, 50))
 menu = pygame.image.load("../assets/menu.gif")
 menu = pygame.transform.scale(menu, (WIDTH, HEIGHT))
+#pause = pygame.image.load("../assets/pause.png")
+#pause = pygame.transform.scale(hint, (75, 75))
 
 # Fonts
 font = pygame.font.Font(None, 36)
@@ -37,10 +39,11 @@ title_font = pygame.font.Font(None, 48)
 
 # Menu Buttons
 mode_buttons = [
-    {"label": "Easy", "rect": pygame.Rect(WIDTH/2 - 125, 100, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Medium", "rect": pygame.Rect(WIDTH/2 - 125, 160, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Hard", "rect": pygame.Rect(WIDTH/2 - 125, 220, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Custom", "rect": pygame.Rect(WIDTH/2 - 125, 280, BUTTON_WIDTH, BUTTON_HEIGHT)}
+    {"label": "Tutorial", "rect": pygame.Rect(WIDTH/2 - 125, 100, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Easy", "rect": pygame.Rect(WIDTH/2 - 125, 160, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Medium", "rect": pygame.Rect(WIDTH/2 - 125, 220, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Hard", "rect": pygame.Rect(WIDTH/2 - 125, 280, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Custom", "rect": pygame.Rect(WIDTH/2 - 125, 340, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
 
 algorithm_buttons = [
@@ -112,7 +115,10 @@ def draw_game(branches):
     score = font.render(f"Moves: {moves_count}", True, (255,255,255))
     screen.blit(board, (WIDTH/2 - 140, 0))
     screen.blit(score, (495,90))
-    screen.blit(hint, (WIDTH - 100, HEIGHT - 100))
+    if player == "You":
+        screen.blit(hint, (WIDTH - 75, HEIGHT - 75))
+    #if player == "Bot":
+        #screen.blit(pause, (WIDTH - 75, HEIGHT - 75))
     for branch in branches:
         if not(branch.completed):
             branch.update_color()
@@ -121,7 +127,7 @@ def draw_game(branches):
             # Draw birds on top of branches
             for i, bird in enumerate(branch.birds):
                 branch_width = branch.image.get_width()
-                bird_x = branch.x - (branch_width // 2) + 65 + (i * 100) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 100)
+                bird_x = branch.x - (branch_width // 2) + 65 + (i * 75) if branch.side == "left" else branch.x + (branch_width // 2) - 65 - (i * 75)
                 bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
                 bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 35))
                 screen.blit(bird_img, bird_rect)
@@ -129,13 +135,15 @@ def draw_game(branches):
               ## pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
     pygame.display.flip()  # Update display
 
+player = None
+
 while True:
     mode = handle_menu("Select Mode", mode_buttons)
     if mode is None:
         pygame.quit()
         exit()
 
-    if mode in ["Easy", "Medium", "Hard", "Custom"]:
+    if mode in ["Tutorial", "Easy", "Medium", "Hard", "Custom"]:
         while True:
             player = handle_menu("Select Player", player_buttons)
             if player == "Back":
@@ -154,7 +162,9 @@ while True:
         if player != "Back" and search_algorithm != "Back":
             break 
 
-if mode == "Easy":
+if mode == "Tutorial":
+    branches = loader.load_branches_from_file("../states/tutorial.txt")
+elif mode == "Easy":
     branches = loader.load_branches_from_file("../states/easy.txt")
 elif mode == "Medium":
     branches = loader.load_branches_from_file("../states/medium.txt")
@@ -277,61 +287,98 @@ branch_sound = pygame.mixer.Sound("../sounds/leaves.wav")
 
 clock = pygame.time.Clock()
 selected_bird = None
+
+i = 0
+BOT_MOVE_EVENT = pygame.USEREVENT + 1  
+pygame.time.set_timer(BOT_MOVE_EVENT, 500)  # Trigger every 500ms
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == BOT_MOVE_EVENT and player == "Bot":
+            if path:
+                if i < len(path) - 1:
+                    print("Bot Move Triggered")
+                    (origin_index, destination_index) = move_done(path[i], path[i+1])
+                    i += 1
+
+                    origin = branches[origin_index]
+                    destination = branches[destination_index]
+
+                    if game_logic.move_birds(origin, destination):
+                        print(f"Move {moves_count} done")
+                        moves_count += 1
+
+                    if game_logic.check_win(branches):
+                        print("You Win!")
+                        action = handle_win_screen(moves_count)
+                        if action == "menu":
+                            exec(open("main.py").read())
+                        running = False
+                else:
+                    running = False
+        # Stop the bot when path is finished
+            else:
+                print("No solution found!")
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if hint_rect.collidepoint(event.pos):   
-                        branches = give_hint(search_algorithm, mode, GameState(branches))
-                        break
-            for branch in branches:
-                if branch.rect.collidepoint(event.pos):
-                    if not move_mode:
-                        if selected_branch:
-                            selected_branch.selected = False
+            if player=="You" and hint_rect.collidepoint(event.pos):   
+                (origin, destination) = give_hint(search_algorithm, mode, GameState(branches))
+                game_logic.move_birds(origin, destination)
+                pygame.time.delay(500)
+                print(f"Origin  = {origin}")
+                print(f"Destin  = {destination}")
+                moves_count += 1
+                move_sound.play()
+
+            else:
+                for branch in branches:
+                    if player == "You" and branch.rect.collidepoint(event.pos):
+                        if not move_mode:
+                            if selected_branch:
+                                selected_branch.selected = False
+                                selected_branch.update_color()
+
+                            selected_branch = branch
+                            bird_sound.play()
+                            selected_branch.selected = True
                             selected_branch.update_color()
 
-                        selected_branch = branch
-                        bird_sound.play()
-                        selected_branch.selected = True
-                        selected_branch.update_color()
+                            move_mode = True
+                        else:
+                            if selected_branch and selected_branch != branch and not branch.completed:
+                                if (game_logic.move_birds(selected_branch, branch)):
+                                    moves_count += 1
+                                    move_sound.play()
+                                #sleep 1 second
+                                pygame.time.delay(500)
+                                if (branch.full_one_species()):
+                                    branch_sound.play()
+                                selected_branch.selected = False
+                                selected_branch.update_color()
 
-                        move_mode = True
-                    else:
-                        if selected_branch and selected_branch != branch and not branch.completed:
-                            if (game_logic.move_birds(selected_branch, branch)):
-                                moves_count += 1
-                                print(moves_count)
-                                move_sound.play()
-                            #sleep 1 second
-                            pygame.time.delay(500)
-                            if (branch.full_one_species()):
-                                branch_sound.play()
-                            selected_branch.selected = False
-                            selected_branch.update_color()
+                                selected_branch = None
+                                move_mode = False
 
-                            selected_branch = None
-                            move_mode = False
-
-                            if game_logic.check_win(branches):
-                                print("You Win!")
-                                action = handle_win_screen(moves_count)
-                                if action == "menu":
-                                    exec(open("main.py").read())  # Reexecuta o script
-                                running = False
-                        elif selected_branch and selected_branch == branch:
-                            selected_branch.selected = False
-                            selected_branch.update_color()
-                            selected_branch = None
-                            move_mode = False
-
+                                if game_logic.check_win(branches):
+                                    print("You Win!")
+                                    action = handle_win_screen(moves_count)
+                                    if action == "menu":
+                                        exec(open("main.py").read())  # Reexecuta o script
+                                    running = False
+                            elif selected_branch and selected_branch == branch:
+                                selected_branch.selected = False
+                                selected_branch.update_color()
+                                selected_branch = None
+                                move_mode = False
+            
     # Draw everything
     draw_game(branches)
     #for bird in birds:
      #   screen.blit(bird.image, bird.rect)
     
     pygame.display.flip()
+    #print("flips")
     clock.tick(FPS)
 
 pygame.quit()

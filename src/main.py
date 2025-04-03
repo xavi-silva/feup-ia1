@@ -30,8 +30,8 @@ button_board = pygame.image.load("../assets/button.png")
 button_board = pygame.transform.scale(button_board, (250, 50))
 menu = pygame.image.load("../assets/menu.gif")
 menu = pygame.transform.scale(menu, (WIDTH, HEIGHT))
-pause = pygame.image.load("../assets/pause.png")
-pause = pygame.transform.scale(hint, (75, 75))
+#pause = pygame.image.load("../assets/pause.png")
+#pause = pygame.transform.scale(hint, (75, 75))
 
 # Fonts
 font = pygame.font.Font(None, 36)
@@ -117,8 +117,8 @@ def draw_game(branches):
     screen.blit(score, (495,90))
     if player == "You":
         screen.blit(hint, (WIDTH - 75, HEIGHT - 75))
-    if player == "Bot":
-        screen.blit(pause, (WIDTH - 75, HEIGHT - 75))
+    #if player == "Bot":
+        #screen.blit(pause, (WIDTH - 75, HEIGHT - 75))
     for branch in branches:
         if not(branch.completed):
             branch.update_color()
@@ -298,29 +298,27 @@ while running:
             running = False
         elif event.type == BOT_MOVE_EVENT and player == "Bot":
             if path:
-                if i < len(path) - 1:  # Ensure i does not go out of bounds
+                if i < len(path) - 1:
                     print("Bot Move Triggered")
-                    (origin, destination) = move_done(path[i], path[i+1])
-                    i += 1  # Move to next step
-                    print(f"Origin: {origin}")
-                    print(f"Destination: {destination}")
-                    print("Branches Before Move")
-                    for branch in branches:
-                        print(branch)
+                    (origin_index, destination_index) = move_done(path[i], path[i+1])
+                    i += 1
+
+                    origin = branches[origin_index]
+                    destination = branches[destination_index]
+
                     if game_logic.move_birds(origin, destination):
                         print(f"Move {moves_count} done")
                         moves_count += 1
-                    for branch in branches:
-                        print(branch)         
 
                     if game_logic.check_win(branches):
                         print("You Win!")
                         action = handle_win_screen(moves_count)
                         if action == "menu":
-                            exec(open("main.py").read())  # Reexecuta o script
-                        running = False   
+                            exec(open("main.py").read())
+                        running = False
                 else:
-                    running = False  # Stop the bot when path is finished
+                    running = False
+        # Stop the bot when path is finished
             else:
                 print("No solution found!")
         elif event.type == pygame.MOUSEBUTTONDOWN:

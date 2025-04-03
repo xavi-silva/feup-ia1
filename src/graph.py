@@ -276,10 +276,6 @@ def a_star_search(initial_state, goal_state_func, operators_func):
     return None
 
 def move_done(state1, state2):
-    if not state1:
-        print("State 1 doesn't exist!")
-    if not state2:
-        print("State 2 doesn't exist!")
     branches1 = state1.branches
     branches2 = state2.branches
     origin = None
@@ -287,12 +283,12 @@ def move_done(state1, state2):
     for i in range(len(branches1)):
         if branches1[i] != branches2[i]:
             if len(branches1[i].birds) > len(branches2[i].birds):
-                origin = branches1[i]
+                origin_index = i
             if len(branches2[i].birds) > len(branches1[i].birds):
-                destination = branches1[i]
+                destination_index = i
     #print(origin)
     #print(destination)
-    return (origin, destination)
+    return (origin_index, destination_index)
 
 # Hint Generator
 def give_hint(search_algorithm, mode, initial_state):

@@ -6,6 +6,8 @@ from collections import deque
 from bird import Bird
 from branch import Branch
 import loader
+import pickle
+
 
 # Initialize pygame
 pygame.init()
@@ -24,14 +26,14 @@ sky = pygame.image.load("../assets/sky.png")
 sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
 hint = pygame.image.load("../assets/hint.png")
 hint = pygame.transform.scale(hint, (75, 75))
-hint_rect = pygame.Rect(WIDTH - 100, HEIGHT - 100, 100, 100)  # Create a rectangle for the clickable area
+pause_hint_rect = pygame.Rect(WIDTH - 75, HEIGHT - 75, 75, 75)  # Create a rectangle for the clickable area
 board = pygame.image.load("../assets/board.png")
 button_board = pygame.image.load("../assets/button.png")
 button_board = pygame.transform.scale(button_board, (250, 50))
 menu = pygame.image.load("../assets/menu.gif")
 menu = pygame.transform.scale(menu, (WIDTH, HEIGHT))
-#pause = pygame.image.load("../assets/pause.png")
-#pause = pygame.transform.scale(hint, (75, 75))
+pause = pygame.image.load("../assets/pause.png")
+pause = pygame.transform.scale(pause, (75, 75))
 
 # Fonts
 font = pygame.font.Font(None, 36)
@@ -109,127 +111,6 @@ def handle_menu(title, buttons):
     
     return choice
 
-def draw_game(branches):
-    #screen.fill(BACKGROUND_COLOR)  # Clear the screen
-    screen.blit(sky, (0, 0))
-    score = font.render(f"Moves: {moves_count}", True, (255,255,255))
-    screen.blit(board, (WIDTH/2 - 140, 0))
-    screen.blit(score, (495,90))
-    if player == "You":
-        screen.blit(hint, (WIDTH - 75, HEIGHT - 75))
-    #if player == "Bot":
-        #screen.blit(pause, (WIDTH - 75, HEIGHT - 75))
-    for branch in branches:
-        if not(branch.completed):
-            branch.update_color()
-            screen.blit(branch.image, branch.rect)
-
-            # Draw birds on top of branches
-            branch_width = branch.image.get_width()
-            num_slots = Branch.branch_size
-            usable_width = branch_width - 2 * 65
-            spacing = usable_width / max(num_slots - 1, 1)
-
-            for i, bird in enumerate(branch.birds):
-                if branch.side == "left":
-                    bird_x = branch.x - (branch_width // 2) + 65 + (i * spacing)
-                else:
-                    bird_x = branch.x + (branch_width // 2) - 65 - (i * spacing)
-
-                bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
-                bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 18))
-                screen.blit(bird_img, bird_rect)
-
-        #for branch in branches:
-            #pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
-    pygame.display.flip()  # Update display
-
-player = None
-
-while True:
-    mode = handle_menu("Select Mode", mode_buttons)
-    if mode is None:
-        pygame.quit()
-        exit()
-
-    if mode in ["Tutorial", "Easy", "Medium", "Hard", "Custom"]:
-        while True:
-            player = handle_menu("Select Player", player_buttons)
-            if player == "Back":
-                break  
-            
-            while True:
-                search_algorithm = handle_menu("Select Algorithm", algorithm_buttons)
-                if search_algorithm == "Back":
-                    break 
-
-                break
-
-            if search_algorithm != "Back":
-                break  
-
-        if player != "Back" and search_algorithm != "Back":
-            break 
-
-if mode == "Tutorial":
-    branches = loader.load_branches_from_file("../states/tutorial.txt")
-elif mode == "Easy":
-    branches = loader.load_branches_from_file("../states/easy.txt")
-elif mode == "Medium":
-    branches = loader.load_branches_from_file("../states/medium.txt")
-elif mode == "Hard":
-    branches = loader.load_branches_from_file("../states/hard.txt")
-elif mode == "Custom":
-    branches = loader.load_branches_from_file("../states/custom.txt")
-else:
-    print("Invalid game state!")
-    pygame.quit()
-
-initial_state = GameState(branches)
-solution_node = None
-
-if search_algorithm == "Breadth-First Search":
-    solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "Depth-First Search":
-    solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "Iterative Deepening":
-    solution_node = iterative_deepening_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states(), 20)
-elif search_algorithm == "Uniform Cost":
-    solution_node = uniform_cost_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "Greedy":
-    solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "A*":
-        solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "Weighted A*":
-        solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-elif search_algorithm == "Auto":
-    if mode == "Easy":
-        search_algorithm = "A*"
-    elif mode == "Medium":
-        search_algorithm = "A*"
-    elif mode == "Hard":
-        search_algorithm = "Greedy"
-    elif mode == "Custom":
-        search_algorithm = "Greedy"
-else:
-    print("Invalid search algorithm.")
-
-# Print the solution path
-if solution_node:
-    print("Solution Found!\n")
-    path = []
-    while solution_node:
-        path.append(solution_node.state)
-        solution_node = solution_node.parent
-
-    path.reverse()
-
-    for step_num, state in enumerate(path):
-        print(f"Step {step_num}:")
-        print(state)
-        print("------------------")
-else:
-    print("No solution found.")
 
 # Draw the win screen
 def handle_win_screen(moves_count):
@@ -277,6 +158,174 @@ def handle_win_screen(moves_count):
 
         pygame.display.flip()
 
+def draw_game(branches):
+    #screen.fill(BACKGROUND_COLOR)  # Clear the screen
+    screen.blit(sky, (0, 0))
+    score = font.render(f"Moves: {moves_count}", True, (255,255,255))
+    screen.blit(board, (WIDTH/2 - 140, 0))
+    screen.blit(score, (495,90))
+    if player == "You":
+        screen.blit(hint, (WIDTH - 75, HEIGHT - 75))
+    elif player == "Bot":
+        screen.blit(pause, (WIDTH - 75, HEIGHT - 75))
+    for branch in branches:
+        if not(branch.completed):
+            branch.update_color()
+            screen.blit(branch.image, branch.rect)
+
+            # Draw birds on top of branches
+            branch_width = branch.image.get_width()
+            num_slots = Branch.branch_size
+            usable_width = branch_width - 2 * 65
+            spacing = usable_width / max(num_slots - 1, 1)
+
+            for i, bird in enumerate(branch.birds):
+                if branch.side == "left":
+                    bird_x = branch.x - (branch_width // 2) + 65 + (i * spacing)
+                else:
+                    bird_x = branch.x + (branch_width // 2) - 65 - (i * spacing)
+
+                bird_img = bird.image if branch.side == "left" else pygame.transform.flip(bird.image, True, False)
+                bird_rect = bird.image.get_rect(midbottom=(bird_x, branch.y + 18))
+                screen.blit(bird_img, bird_rect)
+
+        #for branch in branches:
+            #pygame.draw.rect(screen, (255, 0, 0), branch.rect, 2)
+    pygame.display.flip()  # Update display
+
+def write_moves_to_file(path, filename):
+    with open(filename, "wb") as file:
+        moves = []
+        for i in range(len(path) - 1):
+            o, d = move_done(path[i], path[i + 1])  # Get the move
+            moves.append((o, d))
+        pickle.dump(moves, file)  # Save moves as a binary file
+    print(f"Moves saved")
+
+def read_moves_from_file(filename):
+    """Reads move indices from a file and returns them as a list."""
+    try:
+        with open(filename, "rb") as file:
+            moves = pickle.load(file)  # Load move data
+        print(f"✅ Moves loaded from {filename}: {moves}")
+        return moves
+    except FileNotFoundError:
+        print(f"Error: File {filename} not found.")
+        return []
+
+player = None
+
+while True:
+    mode = handle_menu("Select Mode", mode_buttons)
+    if mode is None:
+        pygame.quit()
+        exit()
+
+    if mode in ["Tutorial", "Easy", "Medium", "Hard", "Custom"]:
+        while True:
+            player = handle_menu("Select Player", player_buttons)
+            if player == "Back":
+                break  
+            
+            while True:
+                search_algorithm = handle_menu("Select Algorithm", algorithm_buttons)
+                if search_algorithm == "Back":
+                    break 
+
+                break
+
+            if search_algorithm != "Back":
+                break  
+
+        if player != "Back" and search_algorithm != "Back":
+            break 
+
+if mode == "Tutorial":
+    branches = loader.load_branches_from_file("../states/tutorial.txt")
+elif mode == "Easy":
+    branches = loader.load_branches_from_file("../states/easy.txt")
+elif mode == "Medium":
+    branches = loader.load_branches_from_file("../states/medium.txt")
+elif mode == "Hard":
+    branches = loader.load_branches_from_file("../states/hard.txt")
+elif mode == "Custom":
+    branches = loader.load_branches_from_file("../states/custom.txt")
+else:
+    print("Invalid game state!")
+    pygame.quit()
+
+#file = "../solutions/hard/dfs.txt"
+#write_moves_to_file(path, file)
+
+moves = []
+
+if mode == "Tutorial":
+    if search_algorithm == "Bread-First Search":
+        moves = read_moves_from_file("../solutions/tutorial/bfs.txt")
+    elif search_algorithm == "Depth-First Search":
+        moves = read_moves_from_file("../solutions/tutorial/dfs.txt")
+    elif search_algorithm == "Iterative Deepening":
+        moves = read_moves_from_file("../solutions/tutorial/iterative_deepening.txt")
+    elif search_algorithm == "A*":
+        moves = read_moves_from_file("../solutions/tutorial/a_star.txt")
+    elif search_algorithm == "Weighted A*":
+        moves = read_moves_from_file("../solutions/tutorial/weighted_a_star.txt")
+    elif search_algorithm == "Greedy":
+        moves = read_moves_from_file("../solutions/tutorial/greedy.txt")
+    elif search_algorithm == "Greedy Backtrack":
+        moves = read_moves_from_file("../solutions/tutorial/greedy_backtrack.txt")
+
+elif mode == "Easy":
+    if search_algorithm == "Bread-First Search":
+        moves = read_moves_from_file("../solutions/easy/bfs.txt")
+    elif search_algorithm == "Depth-First Search":
+        moves = read_moves_from_file("../solutions/easy/dfs.txt")
+    elif search_algorithm == "Iterative Deepening":
+        moves = read_moves_from_file("../solutions/easy/iterative_deepening.txt")
+    elif search_algorithm == "A*":
+        moves = read_moves_from_file("../solutions/easy/a_star.txt")
+    #elif search_algorithm == "Weighted A*":
+    #    moves = read_moves_from_file("../solutions/easy/weighted_a_star.txt")
+    elif search_algorithm == "Greedy":
+        moves = read_moves_from_file("../solutions/easy/greedy.txt")
+    #elif search_algorithm == "Greedy Backtrack":
+    #    moves = read_moves_from_file("../solutions/easy/greedy_backtrack.txt")
+
+elif mode == "Medium":
+    if search_algorithm == "Depth-First Search":
+        moves = read_moves_from_file("../solutions/medium/dfs.txt")
+    elif search_algorithm == "A*":
+        moves = read_moves_from_file("../solutions/medium/a_star.txt")
+    #elif search_algorithm == "Weighted A*":
+    #    moves = read_moves_from_file("../solutions/medium/weighted_a_star.txt")
+    elif search_algorithm == "Greedy":
+        moves = read_moves_from_file("../solutions/medium/greedy.txt")
+    #elif search_algorithm == "Greedy Backtrack":
+    #    moves = read_moves_from_file("../solutions/medium/greedy_backtrack.txt")
+
+elif mode == "Hard":
+    if search_algorithm == "Depth-First Search":
+        moves = read_moves_from_file("../solutions/hard/dfs.txt")
+    elif search_algorithm == "A*":
+        moves = read_moves_from_file("../solutions/hard/a_star.txt")
+    #elif search_algorithm == "Weighted A*":
+    #    moves = read_moves_from_file("../solutions/hard/weighted_a_star.txt")
+    elif search_algorithm == "Greedy":
+        moves = read_moves_from_file("../solutions/hard/greedy.txt")
+    #elif search_algorithm == "Greedy Backtrack":
+    #    moves = read_moves_from_file("../solutions/hard/greedy_backtrack.txt")
+
+"""
+if solution_node:
+    print("Solution Found!\n")
+    while solution_node:
+        moves.append(solution_node.state)
+        solution_node = solution_node.parent
+
+    moves.reverse()
+else:
+    print("No solution found.")
+"""
 
 
 # Game Loop
@@ -300,22 +349,20 @@ selected_bird = None
 i = 0
 BOT_MOVE_EVENT = pygame.USEREVENT + 1  
 pygame.time.set_timer(BOT_MOVE_EVENT, 500)  # Trigger every 500ms
-
+paused = False
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == BOT_MOVE_EVENT and player == "Bot":
-            if path:
-                if i < len(path) - 1:
+            if not paused:
+                if i < len(moves) - 1:
                     print("Bot Move Triggered")
-                    (origin_index, destination_index) = move_done(path[i], path[i+1])
+                    #origin = branches[origin_index]
+                    #destination = branches[destination_index]
+                    origin, destination = moves[i]
                     i += 1
-
-                    origin = branches[origin_index]
-                    destination = branches[destination_index]
-
-                    if game_logic.move_birds(origin, destination):
+                    if game_logic.move_birds(branches[origin], branches[destination]):
                         print(f"Move {moves_count} done")
                         moves_count += 1
 
@@ -327,11 +374,10 @@ while running:
                         running = False
                 else:
                     running = False
-        # Stop the bot when path is finished
-            else:
-                print("No solution found!")
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if player=="You" and hint_rect.collidepoint(event.pos):   
+            if player=="Bot" and pause_hint_rect.collidepoint(event.pos):
+                paused = not paused
+            elif player=="You" and pause_hint_rect.collidepoint(event.pos):   
                 (origin, destination) = give_hint(search_algorithm, mode, GameState(branches))
                 game_logic.move_birds(origin, destination)
                 pygame.time.delay(500)

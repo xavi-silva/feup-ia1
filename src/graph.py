@@ -60,23 +60,13 @@ class GameState:
 
 # Breadth-First Search
 def breadth_first_search(initial_state, goal_state_func, operators_func):
-    print("\nStarting BFS Search")
     root = TreeNode(initial_state)   # create the root node in the search tree
     queue = deque([root])   # initialize the queue to store the nodes
     visited = set([initial_state])
     while queue:
         node = queue.popleft()   # get first element in the queue
-        print("\nExpanding State:")
-        print(node.state)
         if goal_state_func(node.state.branches):   # check goal state
             return node
-
-        new_states = operators_func(node.state)  # Generate next states
-        print(f"Generated {len(new_states)} new states:")
-        for i, state in enumerate(new_states, 1):
-            print(f"State {i}:")
-            print(state)
-            print("------------------")
 
         for state in operators_func(node.state):   # go through next states
             if state not in visited:
@@ -121,6 +111,8 @@ def dfs_recursive(state, goal_state_func, operators_func, visited, parent):
 # Depth-Limited Search
 def depth_limited_search(initial_state, goal_state_func, operators_func, depth_limit):
     visited = set()
+    print(f"Expanding at depth {depth_limit}")
+
     return dls_recursive(initial_state, goal_state_func, operators_func, visited, None, depth_limit, 0)
 
 def dls_recursive(state, goal_state_func, operators_func, visited, parent, depth_limit, depth):

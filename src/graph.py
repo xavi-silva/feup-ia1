@@ -150,6 +150,29 @@ def iterative_deepening_search(initial_state, goal_state_func, operators_func, d
             return s
     return None
 
+# Greedy with backtracking
+def greedy_with_backtracking(initial_state, goal_state_func, operators_func):
+    root = TreeNode(initial_state)
+    priority_queue = []
+    heapq.heappush(priority_queue, (0, id(root), root))  # Apenas h(n)
+    visited = set()
+    visited.add(initial_state)
+
+    while priority_queue:
+        _, _, node = heapq.heappop(priority_queue)
+        
+        if goal_state_func(node.state.branches):
+            return node
+        
+        for state in operators_func(node.state):
+            if state not in visited:
+                h = 100 - state.evaluate()
+                child = TreeNode(state, node)
+                heapq.heappush(priority_queue, (h, id(child), child))
+                visited.add(state)
+
+    return None
+
 # Uniform Cost Search
 def uniform_cost_search(initial_state, goal_state_func, operators_func):
     print("\nStarting Uniform Cost Search")

@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import breadth_first_search, depth_first_search, greedy_search, a_star_search, uniform_cost_search, iterative_deepening_search, give_hint, GameState, move_done
+from graph import breadth_first_search, depth_first_search, greedy_search, a_star_search, uniform_cost_search, iterative_deepening_search, give_hint, GameState, move_done, weighted_a_star_search
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -343,11 +343,10 @@ while running:
             else:
                 for branch in branches:
                     if player == "You" and branch.rect.collidepoint(event.pos):
-                        if not move_mode:
-                            if selected_branch:
-                                selected_branch.selected = False
-                                selected_branch.update_color()
-
+                        if not move_mode and len(branch.birds)!=0:
+                            #if selected_branch:
+                                #selected_branch.selected = False
+                                #selected_branch.update_color()
                             selected_branch = branch
                             bird_sound.play()
                             selected_branch.selected = True

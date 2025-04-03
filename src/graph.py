@@ -277,10 +277,31 @@ def greedy_search(initial_state, check_win, new_states):
 
     return None  # No solution found
 
+def weighted_a_star_search(initial_state, goal_state_func, operators_func):
+    w = 1.2 #weight
+    root = TreeNode(initial_state)
+    priority_queue = []
+    heapq.heappush(priority_queue, (0, id(root), root)) 
+    visited = {}
+    visited[initial_state] = 0
+    while priority_queue:
+       _, _, node = heapq.heappop(priority_queue)
+       if goal_state_func(node.state.branches):
+           return node
+       g = visited[node.state] + 1 #g(n)
+       for state in operators_func(node.state):
+           h = 100 - state.evaluate() #h(n)
+           f = g + w * h
+           if state not in visited or g < visited[state]:
+               visited[state] = g 
+               child = TreeNode(state, node)
+               heapq.heappush(priority_queue, (f, id(child), child))
+    return None
+
 def a_star_search(initial_state, goal_state_func, operators_func):
     root = TreeNode(initial_state)
     priority_queue = []
-    heapq.heappush(priority_queue, (0, id(root), root)) #f(n) = g(n)->number of movements + h(n)-> greedy heuristic
+    heapq.heappush(priority_queue, (0, id(root), root)) 
     visited = {}
     visited[initial_state] = 0
     while priority_queue:
@@ -290,7 +311,7 @@ def a_star_search(initial_state, goal_state_func, operators_func):
        g = visited[node.state] + 1 #g(n)
        for state in operators_func(node.state):
            h = 100 - state.evaluate()
-           f = g + h
+           f = g + h #h(n)
            if state not in visited or g < visited[state]:
                visited[state] = g 
                child = TreeNode(state, node)

@@ -154,34 +154,33 @@ def iterative_deepening_search(initial_state, goal_state_func, operators_func, d
 def uniform_cost_search(initial_state, goal_state_func, operators_func):
     print("\nStarting Uniform Cost Search")
     root = TreeNode(initial_state)
-    priority_queue = [(0, root)]  # (cost, node)
-    visited = set()
+    priority_queue = [(0, id(root), root)]
     
+    visited = {}
+    visited[initial_state] = 0
+
     while priority_queue:
-        current_cost, node = heapq.heappop(priority_queue)
+        current_cost, _, node = heapq.heappop(priority_queue)
         print("\nExpanding State:")
         print(node.state)
-        
-        if goal_state_func(node.state):
+
+        if goal_state_func(node.state.branches):
             return node
-        
-        if node.state in visited:
+
+        if current_cost > visited[node.state]:
             continue
-        visited.add(node.state)
-        
+
         new_states = operators_func(node.state)
-        print(f"Generated {len(new_states)} new states:")
-        for i, state in enumerate(new_states, 1):
-            print(f"State {i}:")
-            print(state)
-            print("------------------")
-        
-        for state, cost in operators_func(node.state):
-            if state not in visited:
-                child = TreeNode(state, node, current_cost + cost)
-                heapq.heappush(priority_queue, (child.cost, child))
-    
+
+        for child_state in new_states:
+            new_cost = current_cost + 1  
+            if child_state not in visited or new_cost < visited[child_state]:
+                visited[child_state] = new_cost
+                child = TreeNode(child_state, node)
+                heapq.heappush(priority_queue, (new_cost, id(child), child))
+
     return None
+
 
 # Greedy Algorithm
 def greedy_bf(initial_state, check_win, new_states):

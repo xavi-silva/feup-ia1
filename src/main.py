@@ -6,6 +6,8 @@ from collections import deque
 from bird import Bird
 from branch import Branch
 import loader
+import pickle
+
 
 # Initialize pygame
 pygame.init()
@@ -222,6 +224,14 @@ if solution_node:
 else:
     print("No solution found.")
 
+with open("../solutions/medium/greedy.txt", "wb") as file:
+    moves = []
+    for i in range(len(path) - 1):
+        o, d = move_done(path[i], path[i + 1])  # Get the move
+        moves.append((o, d))
+    pickle.dump(moves, file)  # Save moves as a binary file
+print(f"✅ Moves saved")
+
 # Draw the win screen
 def handle_win_screen(moves_count):
     win_font = pygame.font.Font(None, 72)
@@ -292,35 +302,54 @@ i = 0
 BOT_MOVE_EVENT = pygame.USEREVENT + 1  
 pygame.time.set_timer(BOT_MOVE_EVENT, 500)  # Trigger every 500ms
 
+def write_moves_to_file(path, filename="../solutions/medium/greedy.txt"):
+    with open(filename, "wb") as file:
+        moves = []
+        for i in range(len(path) - 1):
+            origin, destination = move_done(path[i], path[i + 1])  
+            origin_index = branches.index(origin)  # Store index instead of object
+            destination_index = branches.index(destination)
+            moves.append((origin_index, destination_index))
+        pickle.dump(moves, file)  # Save as binary
+    print(f"✅ Moves saved to {filename}")
+
+def read_moves_from_file(filename="../solutions/medium/greedy.txt"):
+    """Reads move indices from a file and returns them as a list."""
+    try:
+        with open(filename, "rb") as file:
+            moves = pickle.load(file)  # Load move data
+        print(f"✅ Moves loaded from {filename}: {moves}")
+        return moves
+    except FileNotFoundError:
+        print(f"❌ Error: File {filename} not found.")
+        return []
+
+moves = read_moves_from_file("../solutions/medium/greedy.txt")
+
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         elif event.type == BOT_MOVE_EVENT and player == "Bot":
-            if path:
-                if i < len(path) - 1:
-                    print("Bot Move Triggered")
-                    (origin_index, destination_index) = move_done(path[i], path[i+1])
-                    i += 1
+            if i < len(moves) - 1:
+                print("Bot Move Triggered")
+                #origin = branches[origin_index]
+                #destination = branches[destination_index]
+                origin, destination = moves[i]
+                i += 1
+                if game_logic.move_birds(origin, destination):
+                    print(f"Move {moves_count} done")
+                    moves_count += 1
 
-                    origin = branches[origin_index]
-                    destination = branches[destination_index]
-
-                    if game_logic.move_birds(origin, destination):
-                        print(f"Move {moves_count} done")
-                        moves_count += 1
-
-                    if game_logic.check_win(branches):
-                        print("You Win!")
-                        action = handle_win_screen(moves_count)
-                        if action == "menu":
-                            exec(open("main.py").read())
-                        running = False
-                else:
+                if game_logic.check_win(branches):
+                    print("You Win!")
+                    action = handle_win_screen(moves_count)
+                    if action == "menu":
+                        exec(open("main.py").read())
                     running = False
-        # Stop the bot when path is finished
             else:
-                print("No solution found!")
+                running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if player=="You" and hint_rect.collidepoint(event.pos):   
                 (origin, destination) = give_hint(search_algorithm, mode, GameState(branches))

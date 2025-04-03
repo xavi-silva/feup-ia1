@@ -343,11 +343,17 @@ draw_game(branches)
 pygame.time.delay(2000)
 running = True
 
+# Music
 pygame.mixer.music.load("../sounds/background.mp3")
-pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.05)  # Set music volume to 50%
+pygame.mixer.music.play(-1)  # Play music indefinitely
 bird_sound = pygame.mixer.Sound("../sounds/bird.wav")
+bird_sound.set_volume(0.05)  # Set bird sound volume to 10%
 move_sound = pygame.mixer.Sound("../sounds/wings.wav")
+move_sound.set_volume(0.2)  # Set move sound volume to 50%
 branch_sound = pygame.mixer.Sound("../sounds/leaves.wav")
+branch_sound.set_volume(0.2)  # Set branch sound volume to 50%
+
 
 clock = pygame.time.Clock()
 selected_bird = None
@@ -387,14 +393,20 @@ while running:
                 (origin, destination) = give_hint(search_algorithm, mode, GameState(branches))
                 #game_logic.move_birds(branches[origin], branches[destination])
                 #branches[origin].update_color()
-                if selected_branch:
+                if selected_branch and selected_branch == branches[origin]:
                     game_logic.move_birds(branches[origin], branches[destination])
                     moves_count += 1
                     move_sound.play()
-                    selected_branch.update_color()
                     selected_branch.selected = False
+                    selected_branch.update_color()
                     selected_branch = None
+                    move_mode = False                    
                 else:
+                    if selected_branch:
+                        selected_branch.selected = False
+                        selected_branch.update_color()
+                        selected_branch = None
+                        move_mode = False                           
                     selected_branch = branches[origin]
                     bird_sound.play()
                     selected_branch.selected = True

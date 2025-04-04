@@ -21,6 +21,7 @@ BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 undo_stack = []
 moves_count = 0
+hint_state = None
 
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -465,11 +466,16 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if player=="Bot" and pause_hint_rect.collidepoint(event.pos):
                 paused = not paused
-            elif player=="You" and pause_hint_rect.collidepoint(event.pos):   
-                (origin, destination) = give_hint(GameState(branches))
+            elif player=="You" and pause_hint_rect.collidepoint(event.pos): 
+                if hint_state is None:
+                    hint_state = give_hint(GameState(branches))
+                
+                origin, destination = hint_state
+
                 if origin == 0 and destination == 0 and undo_stack:
                     branches = undo_stack.pop()
                     moves_count += 1
+                    hint_state = None
                 elif selected_branch and selected_branch == branches[origin]:
                     undo_stack.append(Branch.clone_all_branches(branches, loader.BRANCH_IMAGE))
                     game_logic.move_birds(branches[origin], branches[destination])
@@ -478,7 +484,17 @@ while running:
                     selected_branch.selected = False
                     selected_branch.update_color()
                     selected_branch = None
-                    move_mode = False         
+                    move_mode = False     
+                    hint_state = None   
+
+                    if game_logic.check_win(branches):
+                        print("You Win!")
+                        print(moves_count)
+                        action = handle_win_screen(moves_count)
+                        if action == "menu":
+                            exec(open("main.py").read())
+                        running = False
+ 
                 else:
                     if selected_branch:
                         selected_branch.selected = False

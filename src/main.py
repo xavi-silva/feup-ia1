@@ -267,7 +267,8 @@ while True:
             if player == "Back":
                 break  
             
-            while True:
+            search_algorithm = None
+            if player == "Bot":
                 if mode == "Tutorial":
                     visible_algorithm_buttons = generate_algorithm_buttons(all_algorithm_labels)
                 if mode == "Saved" or mode == "Custom":
@@ -390,33 +391,34 @@ elif mode == "Hard":
         moves = read_moves_from_file("../solutions/hard/greedy_backtrack.txt")
 
 elif mode == "Custom" or mode == "Saved":
-    initial_state = GameState(branches)
-    path = []
-    moves = []
-    if search_algorithm == "A*":
-        solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Weighted A*":
-        solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Greedy":
-        solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Greedy Backtrack":
-        solution_node = greedy_with_backtracking(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    if solution_node:
-        print("Solution Found!\n")
-        while solution_node:
-            path.append(solution_node.state)
-            solution_node = solution_node.parent
+    if player == "Bot":
+        initial_state = GameState(branches)
+        path = []
+        moves = []
+        if search_algorithm == "A*":
+            solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+        elif search_algorithm == "Weighted A*":
+            solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+        elif search_algorithm == "Greedy":
+            solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+        elif search_algorithm == "Greedy Backtrack":
+            solution_node = greedy_with_backtracking(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+        if solution_node:
+            print("Solution Found!\n")
+            while solution_node:
+                path.append(solution_node.state)
+                solution_node = solution_node.parent
 
-        path.reverse()
-        #for step_num, state in enumerate(path):
-           # print(f"Step {step_num}:")
-           # print(state)
-           # print("------------------")
-        for i in range(len(path) - 1):
-            o, d = move_done(path[i], path[i + 1])  
-            moves.append((o, d))
-    else:
-        print("No solution found.")
+            path.reverse()
+            #for step_num, state in enumerate(path):
+            # print(f"Step {step_num}:")
+            # print(state)
+            # print("------------------")
+            for i in range(len(path) - 1):
+                o, d = move_done(path[i], path[i + 1])  
+                moves.append((o, d))
+        else:
+            print("No solution found.")
 
 
         

@@ -19,6 +19,7 @@ BUTTON_WIDTH, BUTTON_HEIGHT = 250, 50
 BACKGROUND_COLOR = (135, 206, 250)  # Sky Blue
 FPS = 60
 undo_stack = []
+moves_count = 0
 
 # Game Window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -294,6 +295,11 @@ elif mode == "Custom":
     branches = loader.load_branches_from_file("../states/custom.txt")
 elif mode == "Saved":
     branches = loader.load_branches_from_file("../states/saved.txt")
+    try:
+        with open("../states/saved_number_moves.txt", "r") as f:
+            moves_count = int(f.read())
+    except:
+        moves_count = 0
 else:
     print("Invalid game state!")
     pygame.quit()
@@ -379,7 +385,6 @@ elif mode == "Hard":
 # Game Loop
 selected_branch = None
 move_mode = False
-moves_count = 0
 font = pygame.font.Font(None, 36)
 draw_game(branches)
 pygame.time.delay(2000)
@@ -452,7 +457,9 @@ while running:
                 moves_count += 1
             elif save_rect.collidepoint(event.pos):
                 GameState(branches).save_branches_to_file()  
-                print("Saving...")    
+                with open("../states/saved_number_moves.txt", "w") as f:
+                    f.write(str(moves_count))
+                print(f"Saving... (moves: {moves_count})")    
             elif menu_button["rect"].collidepoint(event.pos):
                 print("Menu button clicked")
                 exec(open("main.py").read()) 

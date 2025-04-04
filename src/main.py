@@ -7,6 +7,7 @@ from bird import Bird
 from branch import Branch
 import loader
 import pickle
+import os
 
 
 # Initialize pygame
@@ -252,6 +253,7 @@ def read_moves_from_file(filename):
 player = None
 
 while True:
+    mode_buttons = [b for b in mode_buttons if b["label"] != "Saved" or os.path.exists("../states/saved.txt")]
     mode = handle_menu("Select Mode", mode_buttons)
     if mode is None:
         pygame.quit()

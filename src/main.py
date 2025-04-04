@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import breadth_first_search, depth_first_search, greedy_search, a_star_search, uniform_cost_search, iterative_deepening_search, give_hint, GameState, move_done, weighted_a_star_search
+from graph import give_hint, GameState, move_done, greedy_with_backtracking, weighted_a_star_search
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -62,12 +62,11 @@ mode_buttons = [
 ]
 
 algorithm_buttons = [
-    {"label": "Auto", "rect": pygame.Rect(WIDTH/2 - 125, 100, BUTTON_WIDTH, BUTTON_HEIGHT)},
     {"label": "Breadth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 150, BUTTON_WIDTH, BUTTON_HEIGHT)},
     {"label": "Depth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 200, BUTTON_WIDTH, BUTTON_HEIGHT)},
     {"label": "Iterative Deepening", "rect": pygame.Rect(WIDTH/2 - 125, 250, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Uniform Cost", "rect": pygame.Rect(WIDTH/2 - 125, 300, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 350, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 300, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Backtrack Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 350, BUTTON_WIDTH, BUTTON_HEIGHT)},
     {"label": "A*", "rect": pygame.Rect(WIDTH/2 - 125, 400, BUTTON_WIDTH, BUTTON_HEIGHT)},
     {"label": "Weighted A*", "rect": pygame.Rect(WIDTH/2 - 125, 450, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
@@ -271,10 +270,27 @@ else:
     print("Invalid game state!")
     pygame.quit()
 
-#file = "../solutions/hard/dfs.txt"
-#write_moves_to_file(path, file)
+"""
+initial_state = GameState(branches)
+path = []
+solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+
+if solution_node:
+    print("Solution Found!\n")
+    while solution_node:
+        path.append(solution_node.state)
+        solution_node = solution_node.parent
+
+    path.reverse()
+else:
+    print("No solution found.")
+
+
+file = "../solutions/hard/weighted_a_star.txt"
+write_moves_to_file(path, file)
 
 moves = []
+"""
 
 if mode == "Tutorial":
     if search_algorithm == "Bread-First Search":
@@ -301,49 +317,36 @@ elif mode == "Easy":
         moves = read_moves_from_file("../solutions/easy/iterative_deepening.txt")
     elif search_algorithm == "A*":
         moves = read_moves_from_file("../solutions/easy/a_star.txt")
-    #elif search_algorithm == "Weighted A*":
-    #    moves = read_moves_from_file("../solutions/easy/weighted_a_star.txt")
+    elif search_algorithm == "Weighted A*":
+        moves = read_moves_from_file("../solutions/easy/weighted_a_star.txt")
     elif search_algorithm == "Greedy":
         moves = read_moves_from_file("../solutions/easy/greedy.txt")
-    #elif search_algorithm == "Greedy Backtrack":
-    #    moves = read_moves_from_file("../solutions/easy/greedy_backtrack.txt")
+    elif search_algorithm == "Greedy Backtrack":
+        moves = read_moves_from_file("../solutions/easy/greedy_backtrack.txt")
 
 elif mode == "Medium":
     if search_algorithm == "Depth-First Search":
         moves = read_moves_from_file("../solutions/medium/dfs.txt")
     elif search_algorithm == "A*":
         moves = read_moves_from_file("../solutions/medium/a_star.txt")
-    #elif search_algorithm == "Weighted A*":
-    #    moves = read_moves_from_file("../solutions/medium/weighted_a_star.txt")
+    elif search_algorithm == "Weighted A*":
+        moves = read_moves_from_file("../solutions/medium/weighted_a_star.txt")
     elif search_algorithm == "Greedy":
         moves = read_moves_from_file("../solutions/medium/greedy.txt")
-    #elif search_algorithm == "Greedy Backtrack":
-    #    moves = read_moves_from_file("../solutions/medium/greedy_backtrack.txt")
+    elif search_algorithm == "Greedy Backtrack":
+        moves = read_moves_from_file("../solutions/medium/greedy_backtrack.txt")
 
 elif mode == "Hard":
     if search_algorithm == "Depth-First Search":
         moves = read_moves_from_file("../solutions/hard/dfs.txt")
     elif search_algorithm == "A*":
         moves = read_moves_from_file("../solutions/hard/a_star.txt")
-    #elif search_algorithm == "Weighted A*":
-    #    moves = read_moves_from_file("../solutions/hard/weighted_a_star.txt")
+    elif search_algorithm == "Weighted A*":
+        moves = read_moves_from_file("../solutions/hard/weighted_a_star.txt")
     elif search_algorithm == "Greedy":
         moves = read_moves_from_file("../solutions/hard/greedy.txt")
-    #elif search_algorithm == "Greedy Backtrack":
-    #    moves = read_moves_from_file("../solutions/hard/greedy_backtrack.txt")
-
-"""
-if solution_node:
-    print("Solution Found!\n")
-    while solution_node:
-        moves.append(solution_node.state)
-        solution_node = solution_node.parent
-
-    moves.reverse()
-else:
-    print("No solution found.")
-"""
-
+    elif search_algorithm == "Greedy Backtrack":
+        moves = read_moves_from_file("../solutions/hard/greedy_backtrack.txt")
 
 # Game Loop
 selected_branch = None

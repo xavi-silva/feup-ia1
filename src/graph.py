@@ -57,6 +57,20 @@ class GameState:
         for branch in self.branches:
             points += branch.evaluate()
         return points
+    
+    def save_branches_to_file(self):
+        with open("../states/saved.txt", "w") as file:
+            side = "left"
+            file.write(f"{self.branches[0].branch_size}\n")
+            for branch in self.branches:
+                
+                if branch.side == "right" and side == "left":
+                    file.write("\n")
+                    side = "right" 
+                if not branch.birds:
+                    file.write("-\n")  # Represent empty branches with "-"
+                else:
+                    file.write("".join(str(bird.bird_type) for bird in branch.birds) + "\n")
 
 # Breadth-First Search
 def breadth_first_search(initial_state, goal_state_func, operators_func):
@@ -326,43 +340,19 @@ def move_done(state1, state2):
     return (origin_index, destination_index)
 
 # Hint Generator
-def give_hint(search_algorithm, mode, initial_state):
-    print("INITIAL")
-    print(initial_state)
-    if search_algorithm == "Breadth-First Search":
-        solution_node = breadth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Depth-First Search":
-        solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Iterative Deepening":
-        solution_node = iterative_deepening_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states(), 20)
-    elif search_algorithm == "Uniform Cost":
-        solution_node = uniform_cost_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Greedy":
-        solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "A*":
-            solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Weighted A*":
-            solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    elif search_algorithm == "Auto":
-        if mode == "Easy":
-            solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-        elif mode == "Medium":
-            solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-        elif mode == "Hard":
-            solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-        elif mode == "Custom":
-            solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-    
+def give_hint(initial_state):
+    solution_node = greedy_with_backtracking(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
     path = []
     while solution_node is not None:
         path.append(solution_node.state)
         solution_node = solution_node.parent
     
-    current_state = path[-1]
-    next_state = path[-2]
+    if len(path) >= 2:
+        current_state = path[-1]
+        next_state = path[-2]
+    else: 
+        return (0,0)
     return move_done(current_state, next_state)
-
-
 
 # Auxiliar print function to show the solution
 def print_solution(node):

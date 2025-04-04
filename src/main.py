@@ -25,20 +25,27 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Bird Sorter")
 sky = pygame.image.load("../assets/sky.png")
 sky = pygame.transform.scale(sky, (WIDTH, HEIGHT))
-hint = pygame.image.load("../assets/hint.png")
-hint = pygame.transform.scale(hint, (75, 75))
-pause_hint_rect = pygame.Rect(WIDTH - 75, HEIGHT - 75, 75, 75)  # Create a rectangle for the clickable area
 board = pygame.image.load("../assets/board.png")
 button_board = pygame.image.load("../assets/button.png")
 button_board = pygame.transform.scale(button_board, (250, 50))
 menu = pygame.image.load("../assets/menu.gif")
 menu = pygame.transform.scale(menu, (WIDTH, HEIGHT))
+
+# Interface
 pause = pygame.image.load("../assets/pause.png")
 pause = pygame.transform.scale(pause, (75, 75))
+
+hint = pygame.image.load("../assets/hint.png")
+hint = pygame.transform.scale(hint, (75, 75))
+pause_hint_rect = pygame.Rect(WIDTH - 75, HEIGHT - 75, 75, 75) 
+
 undo_img = pygame.image.load("../assets/undo_move.png")
 undo_img = pygame.transform.scale(undo_img, (75, 75))
 undo_rect = pygame.Rect(20, HEIGHT - 75, 75, 75)
 
+save = pygame.image.load("../assets/download.png")
+save = pygame.transform.scale(save, (75, 75))
+save_rect = pygame.Rect(WIDTH - 150, HEIGHT - 75, 75, 75) 
 
 # Fonts
 font = pygame.font.Font(None, 36)
@@ -50,7 +57,8 @@ mode_buttons = [
     {"label": "Easy", "rect": pygame.Rect(WIDTH/2 - 125, 160, BUTTON_WIDTH, BUTTON_HEIGHT)},
     {"label": "Medium", "rect": pygame.Rect(WIDTH/2 - 125, 220, BUTTON_WIDTH, BUTTON_HEIGHT)},
     {"label": "Hard", "rect": pygame.Rect(WIDTH/2 - 125, 280, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Custom", "rect": pygame.Rect(WIDTH/2 - 125, 340, BUTTON_WIDTH, BUTTON_HEIGHT)}
+    {"label": "Custom", "rect": pygame.Rect(WIDTH/2 - 125, 340, BUTTON_WIDTH, BUTTON_HEIGHT)},
+    {"label": "Saved", "rect": pygame.Rect(WIDTH/2 - 125, 400, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
 
 algorithm_buttons = [
@@ -116,7 +124,6 @@ def handle_menu(title, buttons):
     
     return choice
 
-
 # Draw the win screen
 def handle_win_screen(moves_count):
     win_font = pygame.font.Font(None, 72)
@@ -169,6 +176,8 @@ def draw_game(branches):
     score = font.render(f"Moves: {moves_count}", True, (255,255,255))
     screen.blit(board, (WIDTH/2 - 140, 0))
     screen.blit(score, (495,90))
+    screen.blit(save, (WIDTH - 150, HEIGHT - 75))
+
     if player == "You":
         screen.blit(undo_img, (undo_rect.x, undo_rect.y))
         screen.blit(hint, (WIDTH - 75, HEIGHT - 75))
@@ -227,7 +236,7 @@ while True:
         pygame.quit()
         exit()
 
-    if mode in ["Tutorial", "Easy", "Medium", "Hard", "Custom"]:
+    if mode in ["Tutorial", "Easy", "Medium", "Hard", "Custom", "Saved"]:
         while True:
             player = handle_menu("Select Player", player_buttons)
             if player == "Back":
@@ -256,6 +265,8 @@ elif mode == "Hard":
     branches = loader.load_branches_from_file("../states/hard.txt")
 elif mode == "Custom":
     branches = loader.load_branches_from_file("../states/custom.txt")
+elif mode == "Saved":
+    branches = loader.load_branches_from_file("../states/saved.txt")
 else:
     print("Invalid game state!")
     pygame.quit()
@@ -345,15 +356,14 @@ running = True
 
 # Music
 pygame.mixer.music.load("../sounds/background.mp3")
-pygame.mixer.music.set_volume(0.05)  # Set music volume to 50%
-pygame.mixer.music.play(-1)  # Play music indefinitely
+pygame.mixer.music.set_volume(0.05)  
+pygame.mixer.music.play(-1)  
 bird_sound = pygame.mixer.Sound("../sounds/bird.wav")
-bird_sound.set_volume(0.05)  # Set bird sound volume to 10%
+bird_sound.set_volume(0.05)  
 move_sound = pygame.mixer.Sound("../sounds/wings.wav")
-move_sound.set_volume(0.2)  # Set move sound volume to 50%
+move_sound.set_volume(0.2)  
 branch_sound = pygame.mixer.Sound("../sounds/leaves.wav")
-branch_sound.set_volume(0.2)  # Set branch sound volume to 50%
-
+branch_sound.set_volume(0.2) 
 
 clock = pygame.time.Clock()
 selected_bird = None
@@ -369,38 +379,32 @@ while running:
         elif event.type == BOT_MOVE_EVENT and player == "Bot":
             if not paused:
                 if i < len(moves) - 1:
-                    print("Bot Move Triggered")
-                    #origin = branches[origin_index]
-                    #destination = branches[destination_index]
                     origin, destination = moves[i]
                     i += 1
                     if game_logic.move_birds(branches[origin], branches[destination]):
-                        print(f"Move {moves_count} done")
                         moves_count += 1
-
-                    if game_logic.check_win(branches):
-                        print("You Win!")
-                        action = handle_win_screen(moves_count)
-                        if action == "menu":
-                            exec(open("main.py").read())
-                        running = False
                 else:
+                    print("You Win!")
+                    action = handle_win_screen(moves_count)
+                    if action == "menu":
+                        exec(open("main.py").read())
                     running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if player=="Bot" and pause_hint_rect.collidepoint(event.pos):
                 paused = not paused
             elif player=="You" and pause_hint_rect.collidepoint(event.pos):   
-                (origin, destination) = give_hint(search_algorithm, mode, GameState(branches))
-                #game_logic.move_birds(branches[origin], branches[destination])
-                #branches[origin].update_color()
-                if selected_branch and selected_branch == branches[origin]:
+                (origin, destination) = give_hint(GameState(branches))
+                if origin == 0 and destination == 0 and undo_stack:
+                    branches = undo_stack.pop()
+                    moves_count += 1
+                elif selected_branch and selected_branch == branches[origin]:
                     game_logic.move_birds(branches[origin], branches[destination])
                     moves_count += 1
                     move_sound.play()
                     selected_branch.selected = False
                     selected_branch.update_color()
                     selected_branch = None
-                    move_mode = False                    
+                    move_mode = False         
                 else:
                     if selected_branch:
                         selected_branch.selected = False
@@ -415,6 +419,9 @@ while running:
             elif player == "You" and undo_rect.collidepoint(event.pos) and undo_stack:
                 branches = undo_stack.pop()
                 moves_count += 1
+            elif save_rect.collidepoint(event.pos):
+                GameState(branches).save_branches_to_file()  
+                print("Saving...")    
             else:
                 for branch in branches:
                     if player == "You" and branch.rect.collidepoint(event.pos):

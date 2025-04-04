@@ -68,7 +68,7 @@ all_algorithm_labels = [
     "Depth-First Search",
     "Iterative Deepening",
     "Greedy",
-    "Backtrack Greedy",
+    "Greedy Backtrack",
     "A*",
     "Weighted A*"
 ]
@@ -333,7 +333,7 @@ moves = []
 """
 
 if mode == "Tutorial":
-    if search_algorithm == "Bread-First Search":
+    if search_algorithm == "Breadth-First Search":
         moves = read_moves_from_file("../solutions/tutorial/bfs.txt")
     elif search_algorithm == "Depth-First Search":
         moves = read_moves_from_file("../solutions/tutorial/dfs.txt")
@@ -349,7 +349,7 @@ if mode == "Tutorial":
         moves = read_moves_from_file("../solutions/tutorial/greedy_backtrack.txt")
 
 elif mode == "Easy":
-    if search_algorithm == "Bread-First Search":
+    if search_algorithm == "Breadth-First Search":
         moves = read_moves_from_file("../solutions/easy/bfs.txt")
     elif search_algorithm == "Depth-First Search":
         moves = read_moves_from_file("../solutions/easy/dfs.txt")
@@ -420,7 +420,7 @@ selected_branch = None
 move_mode = False
 font = pygame.font.Font(None, 36)
 draw_game(branches)
-pygame.time.delay(2000)
+#pygame.time.delay(2000)
 running = True
 
 # Music
@@ -531,6 +531,7 @@ while running:
 
                                     if game_logic.check_win(branches):
                                         print("You Win!")
+                                        print(moves_count)
                                         action = handle_win_screen(moves_count)
                                         if action == "menu":
                                             exec(open("main.py").read())  # Reexecuta o script

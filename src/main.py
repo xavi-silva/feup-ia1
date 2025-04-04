@@ -76,6 +76,11 @@ player_buttons = [
     {"label": "Bot", "rect": pygame.Rect(WIDTH/2 - 125, 220, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
 
+menu_button = {
+    "label": "Menu",
+    "rect": pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT - 85, BUTTON_WIDTH, BUTTON_HEIGHT)
+}
+
 def draw_buttons(buttons, hover_index):
     for i, button in enumerate(buttons):
         color = (0, 0, 0) if i == hover_index else (196, 164, 132)
@@ -177,6 +182,16 @@ def draw_game(branches):
     screen.blit(score, (495,90))
     screen.blit(save, (WIDTH - 150, HEIGHT - 75))
 
+    # Button going back to menu
+    hovering = menu_button["rect"].collidepoint(pygame.mouse.get_pos())
+    color = (0, 0, 0) if hovering else (196, 164, 132)
+    pygame.draw.rect(screen, (0, 0, 0), menu_button["rect"], border_radius=10)
+    pygame.draw.rect(screen, color, menu_button["rect"], border_radius=10)
+    screen.blit(button_board, (menu_button["rect"].left, menu_button["rect"].top))
+    text_surface = font.render(menu_button["label"], True, (0, 0, 0))
+    text_rect = text_surface.get_rect(center=menu_button["rect"].center)
+    screen.blit(text_surface, text_rect)
+    
     if player == "You":
         screen.blit(undo_img, (undo_rect.x, undo_rect.y))
         screen.blit(hint, (WIDTH - 75, HEIGHT - 75))
@@ -425,6 +440,10 @@ while running:
             elif save_rect.collidepoint(event.pos):
                 GameState(branches).save_branches_to_file()  
                 print("Saving...")    
+            elif menu_button["rect"].collidepoint(event.pos):
+                print("Menu button clicked")
+                exec(open("main.py").read()) 
+                running = False
             else:
                 for branch in branches:
                     if player == "You" and branch.rect.collidepoint(event.pos):

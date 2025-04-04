@@ -407,6 +407,10 @@ elif mode == "Custom" or mode == "Saved":
             solution_node = solution_node.parent
 
         path.reverse()
+        #for step_num, state in enumerate(path):
+           # print(f"Step {step_num}:")
+           # print(state)
+           # print("------------------")
         for i in range(len(path) - 1):
             o, d = move_done(path[i], path[i + 1])  
             moves.append((o, d))
@@ -447,7 +451,7 @@ while running:
             running = False
         elif event.type == BOT_MOVE_EVENT and player == "Bot":
             if not paused:
-                if i < len(moves) - 1:
+                if i < len(moves):
                     origin, destination = moves[i]
                     i += 1
                     if game_logic.move_birds(branches[origin], branches[destination]):

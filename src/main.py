@@ -467,6 +467,7 @@ while running:
                     branches = undo_stack.pop()
                     moves_count += 1
                 elif selected_branch and selected_branch == branches[origin]:
+                    undo_stack.append(Branch.clone_all_branches(branches, loader.BRANCH_IMAGE))
                     game_logic.move_birds(branches[origin], branches[destination])
                     moves_count += 1
                     move_sound.play()

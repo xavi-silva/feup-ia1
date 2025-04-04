@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import give_hint, GameState, move_done, greedy_with_backtracking, weighted_a_star_search
+from graph import give_hint, GameState, move_done, greedy_with_backtracking, weighted_a_star_search, a_star_search, greedy_search
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -251,6 +251,7 @@ def read_moves_from_file(filename):
 
 player = None
 
+#MenuLoop
 while True:
     mode_buttons = [b for b in mode_buttons if b["label"] != "Saved" or os.path.exists("../states/saved.txt")]
     mode = handle_menu("Select Mode", mode_buttons)
@@ -267,6 +268,9 @@ while True:
             while True:
                 if mode == "Tutorial":
                     visible_algorithm_buttons = generate_algorithm_buttons(all_algorithm_labels)
+                if mode == "Saved" or mode == "Custom":
+                    filtered_labels = [label for label in all_algorithm_labels if label not in ["Breadth-First Search", "Depth-First Search", "Iterative Deepening",]]
+                    visible_algorithm_buttons = generate_algorithm_buttons(filtered_labels)
                 else:
                     filtered_labels = [label for label in all_algorithm_labels if label not in ["Breadth-First Search", "Iterative Deepening"]]
                     visible_algorithm_buttons = generate_algorithm_buttons(filtered_labels)
@@ -378,6 +382,33 @@ elif mode == "Hard":
     elif search_algorithm == "Greedy Backtrack":
         moves = read_moves_from_file("../solutions/hard/greedy_backtrack.txt")
 
+elif mode == "Custom" or mode == "Saved":
+    initial_state = GameState(branches)
+    path = []
+    moves = []
+    if search_algorithm == "A*":
+        solution_node = a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Weighted A*":
+        solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Greedy":
+        solution_node = greedy_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    elif search_algorithm == "Greedy Backtrack":
+        solution_node = greedy_with_backtracking(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+    if solution_node:
+        print("Solution Found!\n")
+        while solution_node:
+            path.append(solution_node.state)
+            solution_node = solution_node.parent
+
+        path.reverse()
+        for i in range(len(path) - 1):
+            o, d = move_done(path[i], path[i + 1])  
+            moves.append((o, d))
+    else:
+        print("No solution found.")
+
+
+        
 # Game Loop
 selected_branch = None
 move_mode = False
@@ -449,13 +480,15 @@ while running:
                     selected_branch.selected = True
                     selected_branch.update_color()
                     move_mode = True
-            elif player == "You" and undo_rect.collidepoint(event.pos) and undo_stack:
+            elif player == "You" and undo_rect.collidepoint(event.pos) and undo_stack:  #UndoMove
                 branches = undo_stack.pop()
                 moves_count += 1
-            elif save_rect.collidepoint(event.pos):
+            elif save_rect.collidepoint(event.pos):  #SaveGame
                 GameState(branches).save_branches_to_file()  
                 print("Saving...")    
-            elif menu_button["rect"].collidepoint(event.pos):
+                exec(open("main.py").read()) 
+                running = False
+            elif menu_button["rect"].collidepoint(event.pos): #BackToMenu
                 print("Menu button clicked")
                 exec(open("main.py").read()) 
                 running = False

@@ -61,14 +61,14 @@ mode_buttons = [
     {"label": "Saved", "rect": pygame.Rect(WIDTH/2 - 125, 400, BUTTON_WIDTH, BUTTON_HEIGHT)}
 ]
 
-algorithm_buttons = [
-    {"label": "Breadth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 150, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Depth-First Search", "rect": pygame.Rect(WIDTH/2 - 125, 200, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Iterative Deepening", "rect": pygame.Rect(WIDTH/2 - 125, 250, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 300, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Backtrack Greedy", "rect": pygame.Rect(WIDTH/2 - 125, 350, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "A*", "rect": pygame.Rect(WIDTH/2 - 125, 400, BUTTON_WIDTH, BUTTON_HEIGHT)},
-    {"label": "Weighted A*", "rect": pygame.Rect(WIDTH/2 - 125, 450, BUTTON_WIDTH, BUTTON_HEIGHT)}
+all_algorithm_labels = [
+    "Breadth-First Search",
+    "Depth-First Search",
+    "Iterative Deepening",
+    "Greedy",
+    "Backtrack Greedy",
+    "A*",
+    "Weighted A*"
 ]
 
 player_buttons = [
@@ -80,6 +80,12 @@ menu_button = {
     "label": "Menu",
     "rect": pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT - 85, BUTTON_WIDTH, BUTTON_HEIGHT)
 }
+
+def generate_algorithm_buttons(labels, start_y=100, spacing=60):
+    return [
+        {"label": label, "rect": pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, start_y + i * spacing, BUTTON_WIDTH, BUTTON_HEIGHT)}
+        for i, label in enumerate(labels)
+    ]
 
 def draw_buttons(buttons, hover_index):
     for i, button in enumerate(buttons):
@@ -257,7 +263,14 @@ while True:
                 break  
             
             while True:
-                search_algorithm = handle_menu("Select Algorithm", algorithm_buttons)
+                if mode == "Tutorial":
+                    visible_algorithm_buttons = generate_algorithm_buttons(all_algorithm_labels)
+                else:
+                    filtered_labels = [label for label in all_algorithm_labels if label not in ["Breadth-First Search", "Iterative Deepening"]]
+                    visible_algorithm_buttons = generate_algorithm_buttons(filtered_labels)
+
+                search_algorithm = handle_menu("Select Algorithm", visible_algorithm_buttons)
+
                 if search_algorithm == "Back":
                     break 
 

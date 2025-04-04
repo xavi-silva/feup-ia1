@@ -551,6 +551,7 @@ while running:
                                         selected_branch.update_color()
                                         selected_branch = None
                                         move_mode = False
+                                        hint_state = None
 
                                     if game_logic.check_win(branches):
                                         print("You Win!")
@@ -564,6 +565,7 @@ while running:
                                 selected_branch.update_color()
                                 selected_branch = None
                                 move_mode = False
+                                hint_state = None
             
     # Draw everything
     draw_game(branches)

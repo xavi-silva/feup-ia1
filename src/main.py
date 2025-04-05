@@ -188,7 +188,8 @@ def draw_game(branches):
     screen.blit(sky, (0, 0))
     score = font.render(f"Moves: {moves_count}", True, (255,255,255))
     screen.blit(board, (WIDTH/2 - 140, 0))
-    screen.blit(score, (495,90))
+    score_rect = score.get_rect(center=(WIDTH // 2, 90))
+    screen.blit(score, score_rect)
     screen.blit(save, (WIDTH - 150, HEIGHT - 75))
 
     # Button going back to menu
@@ -511,6 +512,8 @@ while running:
             elif player == "You" and undo_rect.collidepoint(event.pos) and undo_stack:  #UndoMove
                 branches = undo_stack.pop()
                 moves_count += 1
+                selected_branch = None  
+                move_mode = False
             elif save_rect.collidepoint(event.pos):  #SaveGame
                 GameState(branches).save_branches_to_file()  
                 with open("../states/saved_number_moves.txt", "w") as f:

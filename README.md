@@ -1,4 +1,22 @@
 # Setup
+
+**Download the Project**
+
+1. Download the ZIP of this project from GitHub
+2. Extract the ZIP to a folder on your computer
+3. Open that folder in your terminal or file explorer
+
+## One-Click Setup (Windows Only)
+
+Just double-click the **setup.bat** file in the project folder.
+
+It will:
+- Check if Python is installed
+- Install dependencies
+- Run the game from the correct folder
+
+If you prefer installing manually, check the next section
+
 ## Manual Setup
 
 1. **Install Python**
@@ -14,23 +32,16 @@ Run the following command in the **project root folder** (where `requirements.tx
 pip install -r requirements.txt
 ```
 
-This installs pygame
+This installs **Pygame**
 
-Recommended Pygame version : **2.6.1**
+Recommended **Pygame** version : **2.6.1**
 
 3. **Run the game**
 
 Navigate to the **src** folder and launch the game:
 
+```bash
 cd src
 python main.py
-
-## One-Click Setup 
-
-Just double-click the **setup.bat** file in the project folder.
-
-It will:
-- Check if Python is installed
-- Install dependencies
-- Run the game from the correct folder
+```
 

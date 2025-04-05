@@ -138,7 +138,7 @@ def handle_menu(title, buttons):
     return choice
 
 # Draw the win screen
-def handle_win_screen(moves_count):
+def handle_win_screen(moves_count, impossible = False):
     win_font = pygame.font.Font(None, 72)
     running = True
     hover_index = -1
@@ -152,13 +152,18 @@ def handle_win_screen(moves_count):
         screen.blit(sky, (0, 0))
         screen.blit(board, (WIDTH/2 - 140, 0))
 
-        move_text = font.render(f"Moves: {moves_count}", True, (255, 255, 255))
-        move_rect = move_text.get_rect(center=(WIDTH // 2, 90))
-        screen.blit(move_text, move_rect)
+        if not impossible:
+            move_text = font.render(f"Moves: {moves_count}", True, (255, 255, 255))
+            move_rect = move_text.get_rect(center=(WIDTH // 2, 90))
+            screen.blit(move_text, move_rect)
 
-        title_text = win_font.render("YOU WIN!", True, wood_color)
-        title_rect = title_text.get_rect(center=(WIDTH // 2, 310))
-        screen.blit(title_text, title_rect)
+            title_text = win_font.render("YOU WIN!", True, wood_color)
+            title_rect = title_text.get_rect(center=(WIDTH // 2, 310))
+            screen.blit(title_text, title_rect)
+        else:   
+            title_text = win_font.render("Impossible to resolve!", True, wood_color)
+            title_rect = title_text.get_rect(center=(WIDTH // 2, 310))
+            screen.blit(title_text, title_rect)
 
         draw_buttons(buttons, hover_index)
 
@@ -447,7 +452,13 @@ selected_bird = None
 
 i = 0
 BOT_MOVE_EVENT = pygame.USEREVENT + 1  
-pygame.time.set_timer(BOT_MOVE_EVENT, 500)  # Trigger every 500ms
+pygame.time.set_timer(BOT_MOVE_EVENT, 500)
+
+if player == "Bot" and len(moves) == 0:
+    action = handle_win_screen(moves_count, impossible=True)
+    if action == "menu":
+        exec(open("main.py").read())
+    running = False
 paused = False
 while running:
     for event in pygame.event.get():

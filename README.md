@@ -21,7 +21,7 @@ If you prefer installing manually, check the next section
 
 1. **Install Python**
 
-Download and install from: https://www.python.org/downloads/
+Download and install from: https://www.python.org/downloads/ <br>
 Version **3.9 to 3.12** recommended
 
 2. **Install dependencies**

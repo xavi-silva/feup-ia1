@@ -15,6 +15,8 @@ It will:
 - Install dependencies
 - Run the game from the correct folder
 
+**Note:** This only works if **Python and pip are already installed and available in your system PATH**.  
+
 If you prefer installing manually, check the next section
 
 ## Manual Setup

@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 This installs **Pygame**
 
-Recommended **Pygame** version : **2.6.1**
+**Recommended** Pygame version : **2.6.1**
 
 3. **Run the game**
 

@@ -1,3 +1,10 @@
+# Game Definition
+
+- **Bird Sort** is a single player puzzle game played on a pre-generated board. 
+- The goal is to sort birds by type in different branches 
+- The game ends when all the birds have flows away (puzzle solved)
+
+
 # Setup
 
 **Download the Project**

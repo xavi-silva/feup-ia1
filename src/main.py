@@ -481,7 +481,7 @@ pygame.time.set_timer(BOT_MOVE_EVENT, 500)
 if player == "Bot" and len(moves) == 0:
     action = handle_win_screen(moves_count, impossible=True)
     if action == "menu":
-        exec(open("main.py").read())
+        exec(open("main.py", encoding="utf-8").read())
     running = False
 paused = False
 while running:
@@ -499,7 +499,7 @@ while running:
                     print("You Win!")
                     action = handle_win_screen(moves_count)
                     if action == "menu":
-                        exec(open("main.py").read())
+                        exec(open("main.py", encoding="utf-8").read())
                     running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if player=="Bot" and pause_hint_rect.collidepoint(event.pos):
@@ -530,7 +530,7 @@ while running:
                         print(moves_count)
                         action = handle_win_screen(moves_count)
                         if action == "menu":
-                            exec(open("main.py").read())
+                            exec(open("main.py", encoding="utf-8").read())
                         running = False
  
                 else:
@@ -554,11 +554,11 @@ while running:
                 with open("../states/saved_number_moves.txt", "w") as f:
                     f.write(str(moves_count))
                 print(f"Saving... (moves: {moves_count})")  
-                exec(open("main.py").read()) 
+                exec(open("main.py", encoding="utf-8").read()) 
                 running = False
             elif menu_button["rect"].collidepoint(event.pos): #BackToMenu
                 print("Menu button clicked")
-                exec(open("main.py").read()) 
+                exec(open("main.py", encoding="utf-8").read())
                 running = False
             else:
                 for branch in branches:
@@ -596,7 +596,7 @@ while running:
                                         print(moves_count)
                                         action = handle_win_screen(moves_count)
                                         if action == "menu":
-                                            exec(open("main.py").read())  # Reexecuta o script
+                                            exec(open("main.py", encoding="utf-8").read())  # Reexecuta o script
                                         running = False
                             elif selected_branch and selected_branch == branch:
                                 selected_branch.selected = False

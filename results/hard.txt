@@ -19,3 +19,9 @@ Weighted A* Search Results:
 - Unique States Visited: 904
 - Peak Memory: 6592.4 KB
 
+Depth-First Search Results:
+- Time: 105.539 seconds
+- Moves: 500
+- Unique States Visited: 4823
+- Peak Memory: 94122.6 KB
+

@@ -8,7 +8,7 @@ from branch import Branch
 import loader
 import pickle
 import os
-
+import time
 
 # Initialize pygame
 pygame.init()
@@ -247,14 +247,27 @@ def write_moves_to_file(path, filename):
     print(f"Moves saved")
 
 def read_moves_from_file(filename):
-    """Reads move indices from a file and returns them as a list."""
     try:
         with open(filename, "rb") as file:
             moves = pickle.load(file)  # Load move data
+            
+            # Check if the file is empty
+            if not moves:
+                print(f"⚠️ File {filename} is empty.")
+                return []
+            
         print(f"✅ Moves loaded from {filename}: {moves}")
         return moves
     except FileNotFoundError:
         print(f"Error: File {filename} not found.")
+        return []
+    except EOFError:
+        # Handle case when the file is empty or corrupted
+        print(f"⚠️ File {filename} is empty or corrupted.")
+        return []
+    except pickle.UnpicklingError:
+        # Handle case when pickle data is not valid
+        print(f"⚠️ Error unpickling data from {filename}.")
         return []
 
 player = None
@@ -318,10 +331,21 @@ else:
     print("Invalid game state!")
     pygame.quit()
 
-"""
+
 initial_state = GameState(branches)
 path = []
+start_time = time.time()
+
+# Call your function
 solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+
+# Record the end time
+end_time = time.time()
+
+# Calculate elapsed time
+elapsed_time = end_time - start_time
+print(f"The function took {elapsed_time} seconds to execute.")
+#solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 
 if solution_node:
     print("Solution Found!\n")
@@ -334,11 +358,11 @@ else:
     print("No solution found.")
 
 
-file = "../solutions/easy/dfs.txt"
-write_moves_to_file(path, file)
+#file = "../solutions/easy/dfs.txt"
+#write_moves_to_file(path, file)
+
 
 moves = []
-"""
 
 if mode == "Tutorial":
     if search_algorithm == "Breadth-First Search":

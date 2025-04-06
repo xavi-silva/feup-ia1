@@ -1,7 +1,7 @@
 import pygame
 import random
 import game_logic
-from graph import give_hint, GameState, move_done, greedy_with_backtracking, weighted_a_star_search, a_star_search, greedy_search
+from graph import give_hint, GameState, move_done, greedy_with_backtracking, weighted_a_star_search, a_star_search, greedy_search, depth_first_search
 from collections import deque
 from bird import Bird
 from branch import Branch
@@ -321,7 +321,7 @@ else:
 """
 initial_state = GameState(branches)
 path = []
-solution_node = weighted_a_star_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
+solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
 
 if solution_node:
     print("Solution Found!\n")
@@ -334,7 +334,7 @@ else:
     print("No solution found.")
 
 
-file = "../solutions/hard/weighted_a_star.txt"
+file = "../solutions/easy/dfs.txt"
 write_moves_to_file(path, file)
 
 moves = []

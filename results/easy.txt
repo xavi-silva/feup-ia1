@@ -1,0 +1,6 @@
+Depth-First Search Results:
+- Time: 0.541 seconds
+- Moves: 40
+- Unique States Visited: 204
+- Peak Memory: 2704.0 KB
+

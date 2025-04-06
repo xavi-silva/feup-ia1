@@ -1,0 +1,48 @@
+Breadth-First Search Results:
+- Time: 0.001 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 13.6 KB
+
+Depth-First Search Results:
+- Time: 0.003 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 17.5 KB
+
+Iterative Deepening Search Results:
+- Time: 0.004 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 17.1 KB
+
+Uniform Cost Search Results:
+- Time: 0.002 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 12.5 KB
+
+Greedy Search Results:
+- Time: 0.002 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 10.2 KB
+
+Greedy Backtracking Search Results:
+- Time: 0.001 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 11.5 KB
+
+A* Search Results:
+- Time: 0.002 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 11.0 KB
+
+Weighted A* Search Results:
+- Time: 0.002 seconds
+- Moves: 2
+- Unique States Visited: 4
+- Peak Memory: 10.9 KB
+

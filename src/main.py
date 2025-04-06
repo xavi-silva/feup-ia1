@@ -331,7 +331,7 @@ else:
     print("Invalid game state!")
     pygame.quit()
 
-
+"""
 initial_state = GameState(branches)
 path = []
 start_time = time.time()
@@ -360,7 +360,7 @@ else:
 
 #file = "../solutions/easy/dfs.txt"
 #write_moves_to_file(path, file)
-
+"""
 
 moves = []
 

@@ -5,11 +5,11 @@ import game_logic, loader
 # Garantir pasta de resultados
 os.makedirs("../results", exist_ok=True)
 
-# Carregar estado inicial do nível easy
-branches = loader.load_branches_from_file("../states/easy.txt")
+# Carregar estado inicial do nível hard
+branches = loader.load_branches_from_file("../states/hard.txt")
 initial_state = GameState(branches)
 
-# Conjunto para guardar estados únicos visitados (sem o inicial)
+# Conjunto de estados únicos visitados (sem o inicial)
 visited_states = set()
 
 def generate_child_tracking(state):
@@ -19,7 +19,7 @@ def generate_child_tracking(state):
             visited_states.add(child)
     return children
 
-# Medição de tempo e memória
+# Medir tempo e memória
 tracemalloc.start()
 start = time.time()
 
@@ -42,7 +42,7 @@ if solution_node:
     path.reverse()
 
 # Guardar resultados
-with open("../results/easy.txt", "a") as f:
+with open("../results/hard.txt", "a") as f:
     f.write("Depth-First Search Results:\n")
     if path:
         f.write(f"- Time: {end - start:.3f} seconds\n")

@@ -1,0 +1,30 @@
+Depth-First Search Results:
+- Time: 0.386 seconds
+- Moves: 45
+- Unique States Visited: 192
+- Peak Memory: 2154.3 KB
+
+Greedy Search Results:
+- Time: 0.138 seconds
+- Moves: 21
+- Unique States Visited: 134
+- Peak Memory: 627.0 KB
+
+Greedy Backtracking Search Results:
+- Time: 0.137 seconds
+- Moves: 19
+- Unique States Visited: 152
+- Peak Memory: 742.0 KB
+
+A* Search Results:
+- Time: 0.420 seconds
+- Moves: 17
+- Unique States Visited: 332
+- Peak Memory: 1621.6 KB
+
+Weighted A* Search Results:
+- Time: 0.161 seconds
+- Moves: 17
+- Unique States Visited: 176
+- Peak Memory: 863.5 KB
+

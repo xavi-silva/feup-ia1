@@ -4,3 +4,27 @@ Depth-First Search Results:
 - Unique States Visited: 204
 - Peak Memory: 2704.0 KB
 
+Greedy Search Results:
+- Time: 0.138 seconds
+- Moves: 14
+- Unique States Visited: 117
+- Peak Memory: 543.3 KB
+
+Greedy Backtracking Search Results:
+- Time: 0.120 seconds
+- Moves: 13
+- Unique States Visited: 132
+- Peak Memory: 643.0 KB
+
+A* Search Results:
+- Time: 0.280 seconds
+- Moves: 12
+- Unique States Visited: 278
+- Peak Memory: 1332.8 KB
+
+Weighted A* Search Results:
+- Time: 0.237 seconds
+- Moves: 12
+- Unique States Visited: 226
+- Peak Memory: 1109.1 KB
+

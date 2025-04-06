@@ -1,0 +1,21 @@
+Greedy Search Results:
+- No solution found.
+
+Greedy Backtracking Search Results:
+- Time: 0.560 seconds
+- Moves: 55
+- Unique States Visited: 345
+- Peak Memory: 2523.4 KB
+
+A* Search Results:
+- Time: 23.894 seconds
+- Moves: 53
+- Unique States Visited: 7645
+- Peak Memory: 57152.1 KB
+
+Weighted A* Search Results:
+- Time: 1.332 seconds
+- Moves: 54
+- Unique States Visited: 904
+- Peak Memory: 6592.4 KB
+

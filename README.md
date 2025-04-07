@@ -87,8 +87,69 @@ Since every move has an uniform cost of 1, expanding any child state always incr
 
 ## Greedy Search
 
-## Greedy with Backtracking
 
 ## A* Algorithm
+This algorithm tries to find the shortest path to a goal. It combines greedy search, which estimates the cost from a state **n** to the goal (**h(n)**), with the real cost from the start to the current state **n** (**g(n)**). To implement this algorithm we used a **priority queue** sorted by the evaluation function **f(n) = g(n) + h(n)**. This function estimates the total cost of the cheapest solution that passes through node **n**.
+
+## Greedy with Backtracking
+This algorithm is an adaptation of the A* search algorithm that relies only on the heuristic (**h(n)**), ignoring the actual cost **g(n)**. We noticed that the execution time was faster but it provides a worse solution than the A* algorithm
 
 ## Weighted A* 
+This algorithm is another adaptation of A*, where we introduce a weight **W > 1** to the heuristic in the evaluation function: **f(n) = g(n) + W * h(n)**. We observed that increasing the value of **W** led to faster execution times, but worse solutions, as the algorithm begins to behave more like the Greedy with Backtracking version. Furthermore, for **W = 0**, the algorithm becomes uniform-cost search (only uses **g(n)**). For **W = 1**, we recover the standard A* search. To balance execution time and solution quality, we chose to use **W = 1.2**, which provided a good trade-off between speed and optimality in our experiments.
+
+## Experimental results
+All the conclusions we draw are supported by the following graphs:
+
+# Game Levels
+In order to provide different challenges to the user we implemented 4 game difficulties:
+
+- Tutorial
+- Easy
+- Medium
+- Hard
+
+
+
+Besides that, the user can resume the level later through the **saved mode**, allowing them to continue from where they left off.
+
+There is also a **custom mode** that allows hardcoding a game state:
+
+- The first line of the file represents the capacity of the branches in the level and the following lines represent the actual branches.
+
+- The lines before the empty line are the branches on the left of the screen, while the lines after the empty line are the branches on the right.
+
+- Each number represents a different bird and having "-" on a line means there aren't any birds on it - it's an empty branch.
+
+All game difficulties and modes are loaded from .txt files located in the **states** folder.
+
+# Bot
+
+We implemented a solver bot capable of solving the game levels using different search algorithms. The user can select which algorithm the bot uses from the available options for each difficulty level:
+
+- Tutorial level: Breadth-First Search (BFS), Depth-First Search (DFS), Iterative Deepening, Greedy, Greedy Backtrack, A*, Weighted A*.
+- Easy level: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
+- Medium level: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
+- Hard level: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
+
+For **custom** and **saved mode** user can choose between:
+
+- Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
+
+# Future work
+- Save the stack of states to allow the user, when resuming the game from saved mode, to revert their moves if desired.
+- Button to restart level
+- More game levels
+- Menu design
+- Displaying next level when finishing one
+- Perform more testing of the game to identify and fix any bugs
+
+# Materials Used
+- https://play.google.com/store/apps/details?id=com.globalplay.birdsort2.color.puzzle&hl=en - rules, graphics ideas, gameplay
+- https://realpython.com/pygame-a-primer/ - setup pygame, game loop, draw images, user input
+- https://www.youtube.com/watch?v=ySN5Wnu88nE&ab_channel=Computerphile - A* search
+- Theoretical slides  
+
+# Conclusion
+This project gave us the opportunity to implement the search algorithms we learned in theoretical classes, applying them to a puzzle game.
+Moreover, we understood the importance of choosing the right algorithm, as it requires balancing execution time and the proximity to the optimal solution.
+Additionally, this experience helped us strengthen our problem-solving skills and gain a deeper understanding of how different algorithms behave in practice.

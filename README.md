@@ -53,6 +53,85 @@ Navigate to the **src** folder and launch the game:
 cd src
 python main.py
 ```
+# Interface
+
+## Menu
+
+When launching the game the level menu is displayed, allowing the user to select between the 6 available.
+
+After that, the user must select if he wants to play or to watch a bot solve the level.
+
+In case the user selected the bot mode, he will need to select a search algorithm for the bot to use. The availability of the search algorithm depends on the chosen level.
+
+## Game
+
+Inside the actual game, the user must click on a branch to select it as the origin branch, which will lighten its color, and select a destination branch to make the actual move. Clicking the same branch twice will unselect it. 
+
+Three different buttons can be found in the interface to improve the user experience:
+- **Hint button**: clicking this button will trigger a call to the **greedy_with_backtracking** algorithm and select the origin branch of the first move of the solution path; clicking it again will execute the move.
+
+- **Save button**: saving the current game state is possible by clicking on this button; the game can be continued by selecting the **saved** option in the **level** menu.
+
+- **Undo button**: performing a move adds the previous state to a state stack; clicking this button pops from that stack, going back to the most recent state.
+
+- **Pause button**: the user can pause/resume the bot solution display whenever he want by clicking on this button.
+
+# Problem Formulation
+
+## State Representation
+
+The state of our game is represented by a list of branches and each branch is a list of birds. 
+
+## Initial State
+
+There are currently 6 possible initial states that can be selected in the menu. This topic is explained with more detail in the [Game Levels](#game-levels) section.
+
+## Objective Testing
+
+- Checking branch completeness: **full_one_species** checks if a branch is full of birds of the same species
+
+- Win checking: **check_win** function checks if every branch is either empty or full of birds of the same species
+
+## Operator
+
+There is only one operator in this game, which is the **move** function that receives an *origin branch* and a *destination branch*.
+
+- Cost = 1 for every move
+- Preconditions:
+    - len(dest_branch) < branch_capacity
+    - len(origin_branch) > 0
+    - origin_branch.top = destination branch.top V len(dest_branch) = 0
+- Effects:
+    - specie = dest_branch.top ; n = min(destination_free_space, origin_same_species)
+    - dest_branch.add(n) ; origin_branch.remove(specie, n)
+
+# Project Structure
+
+The project core folder **src** is divided in 7 different modules:
+
+- **main.py** handles the game loop and its initialization logic, the menu and draws every screen of the game 
+- **graph.py** defines both the *GameState* and the *TreeNode* classes, every search algorithm, the hint logic and its auxiliary function *move_done* that returns which move happened between two states
+- **game_logic.py** is where we can find the operator *move_birds*, its auxiliary function *can_move_birds*, and the objective testing *check_win* and its auxiliary *remove_full_branches*
+- **branch.py** defines the branch object and its associated functions, such as adding/removing birds, checking branch emptiness and goal testing, getting the top birds and evaluating it
+- **bird.py** holds the definition of the bird object
+- **loader.py** allows the loading of our game state by reading the state files
+- **benchmark.py** was used for generating the time and memory measurements that are displayed in the *results* folder
+
+In the remaining folders, we can find:
+- all the images and icons used in the display in **assets**
+- every used sound effect in the game in **sounds**
+- the possible initial states in **states**
+- the binary files for the paths of the algorithms for each level in **solutions**
+- the data obtained by benchmark.py in **results**
+
+# State Evaluation
+
+Each state needs to get an associated value for informed search methods to work. In our particular case, we thought that the best way of properly evaluating a game state depended on two simple factors:
+
+- Main factor: The **amount of completed branches**, since this is what the winning condition is all about - having all branches completed (100 points each)
+- Secondary factor: The **number of birds placed after birds of the same color**, which is how we are able to reach completed branches - putting birds of the same color together (1 point each)
+
+The value of a certain game state is the sum of values of every branch he has.
 
 # Search Methods
 
@@ -79,6 +158,12 @@ DFS successfully found solutions in all levels, but in harder levels the solutio
 
 ## Iterative Deepening
 
+Our iterative deepening approach uses the function **depth_limited_search** algorithm with increasing depths, starting from depth = 1 up to depth = 10. 
+
+This DLS uses the previously developed depth-first search algorithm with a slight difference - it keeps track of the current search and ends the search when it reaches the **max_depth**.
+
+Despite successfuly finding a solution in small cases such as the **tutorial** level, it struggled in all the other levels, which proves it is much slower then the other algorithms.
+
 ## Uniform Cost
 
 Although implemented, Uniform Cost Search was removed from the final game, as it behaved like BFS.
@@ -87,6 +172,11 @@ Since every move has an uniform cost of 1, expanding any child state always incr
 
 ## Greedy Search
 
+**greedy_search** explores the node tree in its depth and selects the best option according to the **evaluate** function of the branches. 
+
+The algorithm iterates over the possible next states and evaluates them. It stores the best value and the associated state and chooses it after trying every possible neighbour.
+
+This algorithm provided fast and good solutions in every level except the **hard** one - in our game, sometimes the best move in a certain state can lead to an impossible path, which makes the simple greedy approach invalid.
 
 ## A* Algorithm
 This algorithm tries to find the shortest path to a goal. It combines greedy search, which estimates the cost from a state **n** to the goal (**h(n)**), with the real cost from the start to the current state **n** (**g(n)**). To implement this algorithm we used a **priority queue** sorted by the evaluation function **f(n) = g(n) + h(n)**. This function estimates the total cost of the cheapest solution that passes through node **n**.
@@ -107,8 +197,6 @@ In order to provide different challenges to the user we implemented 4 game diffi
 - Easy
 - Medium
 - Hard
-
-
 
 Besides that, the user can resume the level later through the **saved mode**, allowing them to continue from where they left off.
 

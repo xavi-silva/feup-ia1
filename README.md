@@ -240,11 +240,12 @@ For **custom** and **saved mode** user can choose between:
 # Conclusion
 This project gave us the opportunity to implement the search algorithms we learned in theoretical classes, applying them to a puzzle game.
 Moreover, we understood the importance of choosing the right algorithm, as it requires balancing execution time and the proximity to the optimal solution.
-Additionally, this experience helped us strengthen our problem-solving skills and gain a deeper understanding of how different algorithms behave in practice.
+Additionally, this experience helped us strengthen our problem-solving skills and gain a deeper understanding of how different algorithms behave in practice.  
 
 
-Paulo Coutinho, 202205692
-Rui Xavier Silva, 202207183
-Tomás Vinhas, 202208437
+Project developed by:  
+- Paulo Coutinho, 202205692  
+- Rui Xavier Silva, 202207183  
+- Tomás Vinhas, 202208437  
 
-Artificial Intelligence 2024/2025
+Artificial Intelligence 24/25

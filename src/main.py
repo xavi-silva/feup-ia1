@@ -290,7 +290,7 @@ while True:
             if player == "Bot":
                 if mode == "Tutorial":
                     visible_algorithm_buttons = generate_algorithm_buttons(all_algorithm_labels)
-                if mode == "Saved" or mode == "Custom":
+                elif mode == "Saved" or mode == "Custom":
                     filtered_labels = [label for label in all_algorithm_labels if label not in ["Breadth-First Search", "Depth-First Search", "Iterative Deepening",]]
                     visible_algorithm_buttons = generate_algorithm_buttons(filtered_labels)
                 else:

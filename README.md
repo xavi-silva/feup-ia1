@@ -2,7 +2,7 @@
 
 - **Bird Sort** is a single player puzzle game played on a pre-generated board
 - The goal is to sort birds by type in different branches 
-- The game ends when all the birds have flows away (puzzle solved)
+- The game ends when all the birds have flown away (puzzle solved)
 
 
 # Setup
@@ -131,7 +131,7 @@ Each state needs to get an associated value for informed search methods to work.
 - Main factor: The **amount of completed branches**, since this is what the winning condition is all about - having all branches completed (100 points each)
 - Secondary factor: The **number of birds placed after birds of the same color**, which is how we are able to reach completed branches - putting birds of the same color together (1 point each)
 
-The value of a certain game state is the sum of values of every branch he has.
+The value of a certain game state is the sum of values of every branch it has.
 
 # Search Methods
 
@@ -139,7 +139,7 @@ The function **check_win(branches)** is used as the goal condition in all search
 
 The method **state.generate_child_states()** is also used by every search strategy to generate all valid next states based on possible bird movements.
 
-## Breadth-first Search
+## Breadth-First Search
 
 It uses a **queue** to store states, ensuring that the shallowest solutions are explored first. 
 When generating the child states, adds them to the queue if they haven't been visited yet.
@@ -148,7 +148,7 @@ This method guarantees the shortest solution (in number of moves), but is ineffi
 
 In our project, BFS was only able to resolve the tutorial level before becoming impractical.
 
-## Depth-first Search
+## Depth-First Search
 
 We used a recursive helper function **dfs_recursive** , which explores as deep as possible along each path before backtracking.
 
@@ -162,7 +162,7 @@ Our iterative deepening approach uses the function **depth_limited_search** algo
 
 This DLS uses the previously developed depth-first search algorithm with a slight difference - it keeps track of the current search and ends the search when it reaches the **max_depth**.
 
-Despite successfuly finding a solution in small cases such as the **tutorial** level, it struggled in all the other levels, which proves it is much slower then the other algorithms.
+Despite successfully finding a solution in small cases such as the **tutorial** level, it struggled in all the other levels, which proves it is much slower than the other algorithms.
 
 ## Uniform Cost
 

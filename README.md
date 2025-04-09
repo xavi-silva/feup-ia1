@@ -1,3 +1,6 @@
+![Bird Sort](screenshots/game.png)
+*Figure 1: Bird Sort*
+
 # Game Definition
 
 - **Bird Sort** is a single player puzzle game played on a pre-generated board
@@ -59,9 +62,18 @@ python main.py
 
 When launching the game the level menu is displayed, allowing the user to select between the 6 available.
 
+![Mode Menu](screenshots/menu_mode.png)
+*Figure 2: Mode Menu*
+
 After that, the user must select if he wants to play or to watch a bot solve the level.
 
+![Player Menu](screenshots/menu_player.png)
+*Figure 3: Player Menu*
+
 In case the user selected the bot mode, he will need to select a search algorithm for the bot to use. The availability of the search algorithm depends on the chosen level.
+
+![Algorithm Menu](screenshots/menu_algorithm.png)
+*Figure 4: Algorithm Menu*
 
 ## Game
 
@@ -70,11 +82,23 @@ Inside the actual game, the user must click on a branch to select it as the orig
 Three different buttons can be found in the interface to improve the user experience:
 - **Hint button**: clicking this button will trigger a call to the **greedy_with_backtracking** algorithm and select the origin branch of the first move of the solution path; clicking it again will execute the move.
 
+![Hint Button](screenshots/button_hint.png)
+*Figure 5: Hint Button*
+
 - **Save button**: saving the current game state is possible by clicking on this button; the game can be continued by selecting the **saved** option in the **level** menu.
+
+![Save Button](screenshots/button_save.png)
+*Figure 6: Save Button*
 
 - **Undo button**: performing a move adds the previous state to a state stack; clicking this button pops from that stack, going back to the most recent state.
 
+![Undo Button](screenshots/button_undo.png)
+*Figure 7: Undo Button*
+
 - **Pause button**: the user can pause/resume the bot solution display whenever he want by clicking on this button.
+
+![Pause Button](screenshots/button_hint.png)
+*Figure 8: Pause Button*
 
 # Problem Formulation
 
@@ -123,6 +147,7 @@ In the remaining folders, we can find:
 - the possible initial states in **states**
 - the binary files for the paths of the algorithms for each level in **solutions**
 - the data obtained by benchmark.py in **results**
+- the figures used in README.md in **screenshots**
 
 # State Evaluation
 
@@ -190,13 +215,40 @@ This algorithm is another adaptation of A*, where we introduce a weight **W > 1*
 ## Experimental results
 All the conclusions we draw are supported by the following graphs:
 
+![Move Comparison](screenshots/graph_moves.png)
+*Figure 9: Move Comparison*
+
+![Time Comparison](screenshots/graph_time.png)
+*Figure 10: Time Comparison*
+
+![Visited States Comparison](screenshots/graph_states.png)
+*Figure 11: Visited States Comparison*
+
+![Memory Comparison](screenshots/graph_memory.png)
+*Figure 12: Memory Comparison*
+
 # Game Levels
 In order to provide different challenges to the user we implemented 4 game difficulties:
 
 - Tutorial
+
+![Tutorial Level](screenshots/level_tutorial.png)
+*Figure 13: Tutorial Level*
+
 - Easy
+
+![Easy Level](screenshots/level_easy.png)
+*Figure 14: Easy Level*
+
 - Medium
+
+![Medium Level](screenshots/level_medium.png)
+*Figure 15: Medium Level*
+
 - Hard
+
+![Hard Level](screenshots/level_hard.png)
+*Figure 16: Hard Level*
 
 Besides that, the user can resume the level later through the **saved mode**, allowing them to continue from where they left off.
 

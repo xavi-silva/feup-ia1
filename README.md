@@ -104,7 +104,7 @@ Three different buttons can be found in the interface to improve the user experi
 
 - **Pause button**: the user can pause/resume the bot solution display whenever he want by clicking on this button.
 
-![Pause Button](screenshots/button_hint.png)
+![Pause Button](screenshots/button_pause.png)
 
 *Figure 8: Pause Button*
 
@@ -223,7 +223,7 @@ This algorithm is another adaptation of A*, where we introduce a weight **W > 1*
 ## Experimental results
 All the conclusions we draw are supported by the following graphs:
 
-![Move Comparison](screenshots/graph_moves.png)
+![Moves Comparison](screenshots/graph_moves.png)
 
 *Figure 9: Move Comparison*
 
@@ -282,10 +282,10 @@ All game difficulties and modes are loaded from .txt files located in the **stat
 
 We implemented a solver bot capable of solving the game levels using different search algorithms. The user can select which algorithm the bot uses from the available options for each difficulty level:
 
-- Tutorial level: Breadth-First Search (BFS), Depth-First Search (DFS), Iterative Deepening, Greedy, Greedy Backtrack, A*, Weighted A*.
-- Easy level: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
-- Medium level: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
-- Hard level: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
+- **Tutorial level**: Breadth-First Search (BFS), Depth-First Search (DFS), Iterative Deepening, Greedy, Greedy Backtrack, A*, Weighted A*.
+- **Easy level**: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
+- **Medium level**: Depth-First Search (DFS), Greedy, Greedy Backtrack, A*, Weighted A*.
+- **Hard level**: Depth-First Search (DFS), Greedy (no solution), Greedy Backtrack, A*, Weighted A*.
 
 For **custom** and **saved mode** user can choose between:
 

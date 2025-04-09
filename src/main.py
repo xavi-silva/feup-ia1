@@ -193,7 +193,7 @@ def draw_game(branches):
     screen.blit(sky, (0, 0))
     score = font.render(f"Moves: {moves_count}", True, (255,255,255))
     screen.blit(board, (WIDTH/2 - 140, 0))
-    score_rect = score.get_rect(center=(WIDTH // 2, 90))
+    score_rect = score.get_rect(center=(WIDTH // 2 - 5, 100))
     screen.blit(score, score_rect)
     screen.blit(save, (WIDTH - 150, HEIGHT - 75))
 
@@ -253,21 +253,21 @@ def read_moves_from_file(filename):
             
             # Check if the file is empty
             if not moves:
-                print(f"⚠️ File {filename} is empty.")
+                print(f"File {filename} is empty.")
                 return []
             
-        print(f"✅ Moves loaded from {filename}: {moves}")
+        print(f"Moves loaded from {filename}: {moves}")
         return moves
     except FileNotFoundError:
         print(f"Error: File {filename} not found.")
         return []
     except EOFError:
         # Handle case when the file is empty or corrupted
-        print(f"⚠️ File {filename} is empty or corrupted.")
+        print(f"File {filename} is empty or corrupted.")
         return []
     except pickle.UnpicklingError:
         # Handle case when pickle data is not valid
-        print(f"⚠️ Error unpickling data from {filename}.")
+        print(f"Error unpickling data from {filename}.")
         return []
 
 player = None
@@ -330,37 +330,6 @@ elif mode == "Saved":
 else:
     print("Invalid game state!")
     pygame.quit()
-
-"""
-initial_state = GameState(branches)
-path = []
-start_time = time.time()
-
-# Call your function
-solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-
-# Record the end time
-end_time = time.time()
-
-# Calculate elapsed time
-elapsed_time = end_time - start_time
-print(f"The function took {elapsed_time} seconds to execute.")
-#solution_node = depth_first_search(initial_state, game_logic.check_win, lambda state: state.generate_child_states())
-
-if solution_node:
-    print("Solution Found!\n")
-    while solution_node:
-        path.append(solution_node.state)
-        solution_node = solution_node.parent
-
-    path.reverse()
-else:
-    print("No solution found.")
-
-
-#file = "../solutions/easy/dfs.txt"
-#write_moves_to_file(path, file)
-"""
 
 moves = []
 
@@ -440,10 +409,6 @@ elif mode == "Custom" or mode == "Saved":
                 solution_node = solution_node.parent
 
             path.reverse()
-            #for step_num, state in enumerate(path):
-            # print(f"Step {step_num}:")
-            # print(state)
-            # print("------------------")
             for i in range(len(path) - 1):
                 o, d = move_done(path[i], path[i + 1])  
                 moves.append((o, d))
@@ -501,6 +466,7 @@ while running:
                     if action == "menu":
                         exec(open("main.py", encoding="utf-8").read())
                     running = False
+                #game_logic.check_win(branches)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if player=="Bot" and pause_hint_rect.collidepoint(event.pos):
                 paused = not paused
@@ -557,7 +523,6 @@ while running:
                 exec(open("main.py", encoding="utf-8").read()) 
                 running = False
             elif menu_button["rect"].collidepoint(event.pos): #BackToMenu
-                print("Menu button clicked")
                 exec(open("main.py", encoding="utf-8").read())
                 running = False
             else:
